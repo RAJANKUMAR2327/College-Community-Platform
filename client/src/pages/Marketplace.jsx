@@ -3,6 +3,7 @@ import api from '../api/axios'
 import Layout from '../components/Layout'
 import toast from 'react-hot-toast'
 import { Plus, ShoppingBag, X, Heart, Tag } from 'lucide-react'
+import EmptyState from '../components/EmptyState'
 
 const categories = ['books', 'electronics', 'clothing', 'furniture', 'cycles', 'other']
 const conditions = ['new', 'like-new', 'good', 'fair', 'poor']
@@ -169,10 +170,13 @@ export default function Marketplace() {
           ))}
         </div>
       ) : listings.length === 0 ? (
-        <div className="text-center py-20">
-          <ShoppingBag size={40} className="mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500">No listings found</p>
-        </div>
+        <EmptyState
+          type="marketplace"
+          title="No listings yet"
+          description="Sell your old books, electronics, or anything else to your fellow students."
+          actionLabel="Post a Listing"
+          onAction={() => setShowModal(true)}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {listings.map(listing => (

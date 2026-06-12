@@ -3,6 +3,7 @@ import api from '../api/axios'
 import Layout from '../components/Layout'
 import toast from 'react-hot-toast'
 import { Plus, Search, X, MapPin, Clock, CheckCircle } from 'lucide-react'
+import EmptyState from '../components/EmptyState'
 
 const categories = ['electronics', 'books', 'clothing', 'accessories', 'documents', 'other']
 
@@ -158,10 +159,13 @@ export default function LostFound() {
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-20">
-          <Search size={40} className="mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500">No posts found</p>
-        </div>
+        <EmptyState
+          type="lostfound"
+          title="Nothing lost or found yet"
+          description="Help your campus community — report a lost item or something you've found."
+          actionLabel="Report an Item"
+          onAction={() => setShowModal(true)}
+        />
       ) : (
         <div className="space-y-3">
           {posts.map(post => (

@@ -52,25 +52,55 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'Notes shared', value: stats.notes },
-          { label: 'Open lost items', value: stats.lostFound },
-          { label: 'Upcoming events', value: stats.events },
-          { label: 'Marketplace listings', value: stats.listings },
-        ].map((s) => (
-          <div key={s.label} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4">
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{s.label}</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{s.value}</p>
+      {/* Hero Banner */}
+      <div className="relative bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 rounded-2xl p-6 text-white overflow-hidden mb-6">
+        {/* Background decoration */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24" />
+
+        <div className="relative z-10">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-xl mb-1">Welcome to CampusConnect! 🎉</h3>
+              <p className="text-indigo-100 text-sm max-w-md">
+                Your all-in-one college community platform. Share notes, find lost items,
+                discover events, buy & sell, and explore placement opportunities.
+              </p>
+            </div>
+            <div className="flex gap-3 shrink-0">
+              <Link to="/notes"
+                className="bg-white text-indigo-600 text-xs font-semibold px-4 py-2.5 rounded-xl hover:bg-indigo-50 transition-colors whitespace-nowrap">
+                Upload Notes
+              </Link>
+              <Link to="/events"
+                className="border border-white/30 text-white text-xs font-semibold px-4 py-2.5 rounded-xl hover:bg-white/10 transition-colors whitespace-nowrap">
+                Browse Events
+              </Link>
+            </div>
           </div>
-        ))}
+
+          {/* Mini stats row inside banner */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
+            {[
+              { label: 'Notes', value: stats.notes, emoji: '📚' },
+              { label: 'Lost Items', value: stats.lostFound, emoji: '🔍' },
+              { label: 'Events', value: stats.events, emoji: '📅' },
+              { label: 'Listings', value: stats.listings, emoji: '🛍️' },
+            ].map(s => (
+              <div key={s.label} className="bg-white/10 rounded-xl p-3 text-center backdrop-blur-sm">
+                <div className="text-lg mb-0.5">{s.emoji}</div>
+                <div className="text-xl font-bold">{s.value}</div>
+                <div className="text-xs text-indigo-200">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Quick access */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-6 mb-6">
+      {/* Quick access modules */}
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-6">
         <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">Quick Access</h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {modules.map(({ label, icon: Icon, to, color, bg }) => (
             <Link
               key={to} to={to}
@@ -84,28 +114,6 @@ export default function Dashboard() {
               </span>
             </Link>
           ))}
-        </div>
-      </div>
-      {/* Stats — 1 col mobile, 2 col tablet, 4 col desktop */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-
-      {/* Modules — 2 col mobile, 5 col desktop */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
-      {/* Welcome banner */}
-      <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl p-6 text-white">
-        <h3 className="font-semibold text-lg mb-1">Welcome to CampusConnect! 🎉</h3>
-        <p className="text-indigo-100 text-sm mb-4">
-          Share notes, find lost items, discover events, buy & sell, and explore placement opportunities — all in one place.
-        </p>
-        <div className="flex gap-3">
-          <Link to="/notes"
-            className="bg-white text-indigo-600 text-xs font-semibold px-4 py-2 rounded-lg hover:bg-indigo-50 transition-colors">
-            Upload Notes
-          </Link>
-          <Link to="/events"
-            className="border border-indigo-400 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-indigo-400 transition-colors">
-            Browse Events
-          </Link>
         </div>
       </div>
     </Layout>

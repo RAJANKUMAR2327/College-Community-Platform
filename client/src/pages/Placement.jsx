@@ -6,6 +6,7 @@ import {
   Plus, Briefcase, X, ArrowUp,
   Building, MapPin, Clock, ExternalLink,
 } from 'lucide-react'
+import EmptyState from '../components/EmptyState'
 
 const types = ['job', 'internship', 'experience', 'resource', 'discussion']
 
@@ -201,10 +202,13 @@ export default function Placement() {
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-20">
-          <Briefcase size={40} className="mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500">No posts yet — be the first to share!</p>
-        </div>
+        <EmptyState
+          type="placement"
+          title="No placement posts yet"
+          description="Share job opportunities, interview experiences, or resources with your batchmates."
+          actionLabel="Create First Post"
+          onAction={() => setShowModal(true)}
+        />
       ) : (
         <div className="space-y-3">
           {posts.map(post => (

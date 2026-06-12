@@ -3,6 +3,7 @@ import api from '../api/axios'
 import Layout from '../components/Layout'
 import toast from 'react-hot-toast'
 import { Plus, Calendar, MapPin, Users, X } from 'lucide-react'
+import EmptyState from '../components/EmptyState'
 
 const categories = ['academic', 'cultural', 'sports', 'technical', 'placement', 'other']
 
@@ -85,8 +86,6 @@ function CreateEventModal({ onClose, onSuccess }) {
               {loading ? 'Creating...' : 'Create Event'}
             </button>
           </div>
-          {/* Events grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </form>
       </div>
     </div>
@@ -119,7 +118,7 @@ export default function Events() {
   const handleAttend = async (id) => {
     try {
       const { data } = await api.patch(`/events/${id}/attend`)
-      toast.success(data.attending ? 'You\'re attending!' : 'Removed from attendees')
+      toast.success(data.attending ? "You're attending!" : 'Removed from attendees')
       fetchEvents()
     } catch { toast.error('Failed') }
   }
@@ -175,10 +174,13 @@ export default function Events() {
           ))}
         </div>
       ) : events.length === 0 ? (
-        <div className="text-center py-20">
-          <Calendar size={40} className="mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500">No events found</p>
-        </div>
+        <EmptyState
+          type="events"
+          title="No events yet"
+          description="Create the first campus event and get your fellow students excited!"
+          actionLabel="Create Event"
+          onAction={() => setShowModal(true)}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {events.map(event => (
