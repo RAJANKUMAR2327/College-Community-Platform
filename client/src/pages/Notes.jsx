@@ -125,7 +125,41 @@ function UploadModal({ onClose, onSuccess }) {
     </div>
   )
 }
+{/* Filters — stack on mobile */}
+<div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4 mb-6 flex flex-wrap gap-3">
+  <div className="flex items-center gap-2 w-full sm:flex-1 sm:min-w-48">
+    <Search size={15} className="text-gray-400 shrink-0" />
+    <input
+      placeholder="Search notes..."
+      className="flex-1 text-sm outline-none bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400"
+      value={search}
+      onChange={e => setSearch(e.target.value)}
+    />
+  </div>
+  <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+    <select
+      className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      value={filters.branch}
+      onChange={e => setFilters(f => ({ ...f, branch: e.target.value }))}
+    >
+      <option value="">All Branches</option>
+      {['CSE','ECE','EEE','Mechanical','Chemical','Civil'].map(b => (
+        <option key={b} value={b}>{b}</option>
+      ))}
+    </select>
+    <select
+      className="text-sm border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      value={filters.year}
+      onChange={e => setFilters(f => ({ ...f, year: e.target.value }))}
+    >
+      <option value="">All Years</option>
+      {[1,2,3,4,5].map(y => <option key={y} value={y}>Year {y}</option>)}
+    </select>
+  </div>
+</div>
 
+{/* Notes grid — 1 col mobile, 2 col tablet, 3 col desktop */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
 function NoteCard({ note, onLike, onBookmark, onDownload }) {
   return (
     <div className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-sm transition-shadow">

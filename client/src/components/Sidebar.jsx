@@ -1,10 +1,11 @@
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import useAuthStore from '../store/authStore'
 import useThemeStore from '../store/themeStore'
 import {
   LayoutDashboard, FileText, Search, Calendar,
-  ShoppingBag, Briefcase, User, Bell, Settings,
-  LogOut, Sun, Moon,
+  ShoppingBag, Briefcase, User, Settings,
+  LogOut, Sun, Moon, Menu, X,
 } from 'lucide-react'
 
 const navItems = [
@@ -25,6 +26,7 @@ export default function Sidebar() {
   const { user, logout } = useAuthStore()
   const { theme, toggleTheme } = useThemeStore()
   const navigate = useNavigate()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
@@ -37,21 +39,36 @@ export default function Sidebar() {
        ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium'
        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'}`
 
-  return (
-    <aside className="w-52 shrink-0 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col h-screen sticky top-0">
+  const SidebarContent = () => (
+    <>
       {/* Logo */}
-      <div className="px-4 py-5 border-b border-gray-100 dark:border-gray-800">
-        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">🎓 CampusConnect</p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{user?.college || 'Your College'}</p>
+      <div className="px-4 py-5 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">🎓 CampusConnect</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate max-w-[140px]">
+            {user?.college || 'Your College'}
+          </p>
+        </div>
+        {/* Close button on mobile */}
+        <button
+          onClick={() => setMobileOpen(false)}
+          className="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+        >
+          <X size={18} />
+        </button>
       </div>
 
-      {/* Main nav */}
+      {/* Nav */}
       <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
         <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider px-2 mb-2">
           Main
         </p>
         {navItems.map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} className={linkClass}>
+          <NavLink
+            key={to} to={to}
+            className={linkClass}
+            onClick={() => setMobileOpen(false)}
+          >
             <Icon size={16} />
             {label}
           </NavLink>
@@ -61,7 +78,11 @@ export default function Sidebar() {
           You
         </p>
         {bottomItems.map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} className={linkClass}>
+          <NavLink
+            key={to} to={to}
+            className={linkClass}
+            onClick={() => setMobileOpen(false)}
+          >
             <Icon size={16} />
             {label}
           </NavLink>
@@ -82,7 +103,7 @@ export default function Sidebar() {
       {/* User footer */}
       <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/50 flex items-center justify-center text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+          <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/50 flex items-center justify-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 shrink-0">
             {user?.name?.charAt(0) || 'U'}
           </div>
           <div className="min-w-0">
@@ -98,6 +119,44 @@ export default function Sidebar() {
           Logout
         </button>
       </div>
-    </aside>
+    </>
+  )
+
+  return (
+    <>
+      {/* Mobile top bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center justify-between">
+        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">🎓 CampusConnect</p>
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+        >
+          <Menu size={22} />
+        </button>
+      </div>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Mobile drawer */}
+      <aside className={`
+        md:hidden fixed top-0 left-0 h-full w-64 z-50 flex flex-col
+        bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800
+        transform transition-transform duration-300
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <SidebarContent />
+      </aside>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-52 shrink-0 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex-col h-screen sticky top-0">
+        <SidebarContent />
+      </aside>
+    </>
   )
 }

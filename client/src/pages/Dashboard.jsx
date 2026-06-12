@@ -86,7 +86,11 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+      {/* Stats — 1 col mobile, 2 col tablet, 4 col desktop */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
+      {/* Modules — 2 col mobile, 5 col desktop */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"></div>
       {/* Welcome banner */}
       <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl p-6 text-white">
         <h3 className="font-semibold text-lg mb-1">Welcome to CampusConnect! 🎉</h3>

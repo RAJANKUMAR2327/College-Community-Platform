@@ -85,6 +85,8 @@ function CreateEventModal({ onClose, onSuccess }) {
               {loading ? 'Creating...' : 'Create Event'}
             </button>
           </div>
+          {/* Events grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </form>
       </div>
     </div>

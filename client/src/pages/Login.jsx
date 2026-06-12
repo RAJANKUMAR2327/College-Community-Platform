@@ -102,3 +102,46 @@ console.log('API URL:', import.meta.env.VITE_API_URL)
     </div>
   )
 }
+<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 dark:from-gray-900 to-white dark:to-gray-950 px-4 py-8">
+  <div className="w-full max-w-md">
+    {/* Header */}
+    <div className="text-center mb-8">
+      <div className="text-4xl mb-3">🎓</div>
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">CampusConnect</h1>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign in to your college network</p>
+    </div>
+
+    {/* Card */}
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 sm:p-8">
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">Welcome back</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            College Email
+          </label>
+          <input
+            type="email" name="email" value={form.email}
+            onChange={handleChange} placeholder="you@college.ac.in" required
+            className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Password
+          </label>
+          <input
+            type="password" name="password" value={form.password}
+            onChange={handleChange} placeholder="••••••••" required
+            className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+        <button
+          type="submit" disabled={loading}
+          className="w-full bg-indigo-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
+        >
+          {loading ? 'Signing in...' : 'Sign in'}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
