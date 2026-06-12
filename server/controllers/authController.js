@@ -152,3 +152,20 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({ message: err.message })
   }
 }
+export const updateAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'Please upload an image.' })
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar: req.file.path },
+      { new: true }
+    )
+
+    res.json({ message: 'Avatar updated!', avatar: user.avatar, user })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}

@@ -8,6 +8,14 @@ import {
   resetPassword,
 } from '../controllers/authController.js'
 import { protect } from '../middleware/auth.js'
+import {
+  register, login, verifyEmail, getMe,
+  forgotPassword, resetPassword,
+  updateProfile, updateAvatar
+} from '../controllers/authController.js'
+import { uploadMarketplaceImage } from '../utils/cloudinary.js'
+
+router.patch('/update-avatar', protect, uploadMarketplaceImage.single('avatar'), updateAvatar)
 
 const router = express.Router()
 

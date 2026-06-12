@@ -22,24 +22,15 @@ const bottomItems = [
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
 
-export default function Sidebar() {
-  const { user, logout } = useAuthStore()
-  const { theme, toggleTheme } = useThemeStore()
-  const navigate = useNavigate()
-  const [mobileOpen, setMobileOpen] = useState(false)
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
-
+// ── Extracted OUTSIDE the main component ──────────────────────────
+function SidebarContent({ user, theme, toggleTheme, handleLogout, onClose }) {
   const linkClass = ({ isActive }) =>
     `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all
      ${isActive
        ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium'
        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'}`
 
-  const SidebarContent = () => (
+  return (
     <>
       {/* Logo */}
       <div className="px-4 py-5 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
@@ -49,9 +40,8 @@ export default function Sidebar() {
             {user?.college || 'Your College'}
           </p>
         </div>
-        {/* Close button on mobile */}
         <button
-          onClick={() => setMobileOpen(false)}
+          onClick={onClose}
           className="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
           <X size={18} />
@@ -64,11 +54,7 @@ export default function Sidebar() {
           Main
         </p>
         {navItems.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to} to={to}
-            className={linkClass}
-            onClick={() => setMobileOpen(false)}
-          >
+          <NavLink key={to} to={to} className={linkClass} onClick={onClose}>
             <Icon size={16} />
             {label}
           </NavLink>
@@ -78,11 +64,7 @@ export default function Sidebar() {
           You
         </p>
         {bottomItems.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to} to={to}
-            className={linkClass}
-            onClick={() => setMobileOpen(false)}
-          >
+          <NavLink key={to} to={to} className={linkClass} onClick={onClose}>
             <Icon size={16} />
             {label}
           </NavLink>
@@ -103,8 +85,12 @@ export default function Sidebar() {
       {/* User footer */}
       <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2 mb-3">
-          <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/50 flex items-center justify-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 shrink-0">
-            {user?.name?.charAt(0) || 'U'}
+          {/* Replace the letter avatar with image support */}
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-indigo-50 dark:bg-indigo-900/50 flex items-center justify-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 shrink-0">
+            {user?.avatar ? (
+              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />): (
+                user?.name?.charAt(0) || 'U')
+            }
           </div>
           <div className="min-w-0">
             <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">{user?.name}</p>
@@ -121,6 +107,24 @@ export default function Sidebar() {
       </div>
     </>
   )
+}
+
+// ── Main Sidebar component ─────────────────────────────────────────
+export default function Sidebar() {
+  const { user, logout } = useAuthStore()
+  const { theme, toggleTheme } = useThemeStore()
+  const navigate = useNavigate()
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
+
+  const props = {
+    user, theme, toggleTheme, handleLogout,
+    onClose: () => setMobileOpen(false),
+  }
 
   return (
     <>
@@ -150,12 +154,12 @@ export default function Sidebar() {
         transform transition-transform duration-300
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <SidebarContent />
+        <SidebarContent {...props} />
       </aside>
 
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-52 shrink-0 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex-col h-screen sticky top-0">
-        <SidebarContent />
+        <SidebarContent {...props} />
       </aside>
     </>
   )
