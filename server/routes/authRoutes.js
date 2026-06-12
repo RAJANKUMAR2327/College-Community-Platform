@@ -14,6 +14,15 @@ import {
   updateProfile, updateAvatar
 } from '../controllers/authController.js'
 import { uploadMarketplaceImage } from '../utils/cloudinary.js'
+import {
+  register, login, verifyEmail, getMe,
+  forgotPassword, resetPassword,
+  updateProfile, updateAvatar,
+  changePassword, deleteAccount
+} from '../controllers/authController.js'
+
+router.patch('/change-password', protect, changePassword)
+router.delete('/delete-account', protect, deleteAccount)
 
 router.patch('/update-avatar', protect, uploadMarketplaceImage.single('avatar'), updateAvatar)
 

@@ -164,3 +164,47 @@ export default function Sidebar() {
     </>
   )
 }
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Both fields are required.' })
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters.' })
+    }
+
+    const user = await User.findById(req.user._id).select('+password')
+    const isMatch = await user.matchPassword(currentPassword)
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect.' })
+    }
+
+    user.password = newPassword
+    await user.save()
+
+    res.json({ message: 'Password changed successfully!' })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
+export const deleteAccount = async (req, res) => {
+  try {
+    const { password } = req.body
+    const user = await User.findById(req.user._id).select('+password')
+    const isMatch = await user.matchPassword(password)
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Password is incorrect.' })
+    }
+
+    await user.deleteOne()
+    res.json({ message: 'Account deleted successfully.' })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
