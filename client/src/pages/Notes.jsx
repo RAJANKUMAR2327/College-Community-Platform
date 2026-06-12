@@ -4,6 +4,7 @@ import api from '../api/axios'
 import Layout from '../components/Layout'
 import toast from 'react-hot-toast'
 import { CardSkeleton } from '../components/Skeleton'
+import Comments from '../components/Comments'
 import {
   Upload,
   Download,
@@ -12,6 +13,7 @@ import {
   Search,
   FileText,
   X,
+  MessageSquare,
 } from 'lucide-react'
 
 function UploadModal({ onClose, onSuccess }) {
@@ -216,57 +218,78 @@ function UploadModal({ onClose, onSuccess }) {
 }
 
 function NoteCard({ note, onLike, onBookmark, onDownload }) {
+  const [showComments, setShowComments] = useState(false)
+
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-4">
-      <div className="flex items-start gap-3">
-        <div className="bg-indigo-50 p-2 rounded-lg">
-          <FileText size={18} className="text-indigo-500" />
+    <div className="bg-white rounded-xl border border-gray-100 p-4 flex flex-col justify-between h-full">
+      <div>
+        <div className="flex items-start gap-3">
+          <div className="bg-indigo-50 p-2 rounded-lg">
+            <FileText size={18} className="text-indigo-500" />
+          </div>
+
+          <div className="flex-1">
+            <h3 className="font-semibold">{note.title}</h3>
+            <p className="text-sm text-gray-500">{note.subject}</p>
+          </div>
         </div>
 
-        <div className="flex-1">
-          <h3 className="font-semibold">{note.title}</h3>
-          <p className="text-sm text-gray-500">{note.subject}</p>
+        {note.description && (
+          <p className="text-sm text-gray-500 mt-2">
+            {note.description}
+          </p>
+        )}
+
+        <div className="flex flex-wrap gap-2 mt-3">
+          <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">
+            {note.branch}
+          </span>
+
+          <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+            Year {note.year}
+          </span>
         </div>
       </div>
 
-      {note.description && (
-        <p className="text-sm text-gray-500 mt-2">
-          {note.description}
-        </p>
-      )}
+      <div>
+        <div className="flex justify-between items-center mt-4 border-t pt-3">
+          <span className="text-xs text-gray-500">
+            {note.uploader?.name}
+          </span>
 
-      <div className="flex flex-wrap gap-2 mt-3">
-        <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">
-          {note.branch}
-        </span>
+          <div className="flex gap-3 text-gray-600">
+            <button 
+              onClick={() => setShowComments(!showComments)} 
+              className={`hover:text-indigo-600 transition-colors ${showComments ? 'text-indigo-600' : ''}`}
+              title="Toggle Comments"
+            >
+              <MessageSquare size={16} />
+            </button>
 
-        <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-          Year {note.year}
-        </span>
-      </div>
+            <button onClick={() => onLike(note._id)} className="hover:text-red-500 transition-colors">
+              <Heart size={16} />
+            </button>
 
-      <div className="flex justify-between items-center mt-4 border-t pt-3">
-        <span className="text-xs text-gray-500">
-          {note.uploader?.name}
-        </span>
+            <button onClick={() => onBookmark(note._id)} className="hover:text-amber-500 transition-colors">
+              <Bookmark size={16} />
+            </button>
 
-        <div className="flex gap-3">
-          <button onClick={() => onLike(note._id)}>
-            <Heart size={16} />
-          </button>
-
-          <button onClick={() => onBookmark(note._id)}>
-            <Bookmark size={16} />
-          </button>
-
-          <button
-            onClick={() =>
-              onDownload(note._id, note.fileUrl)
-            }
-          >
-            <Download size={16} />
-          </button>
+            <button
+              onClick={() =>
+                onDownload(note._id, note.fileUrl)
+              }
+              className="hover:text-green-600 transition-colors"
+            >
+              <Download size={16} />
+            </button>
+          </div>
         </div>
+
+        {showComments && (
+          <div className="mt-4 border-t pt-3 transition-all">
+            <Comments targetId={note._id} targetType="note" />
+          </div>
+        )}
       </div>
     </div>
   )
@@ -409,9 +432,11 @@ export default function Notes() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => <CardSkeleton key={i} />)}
         </div>
+      ) : notes.length === 0 ? (
+        <EmptyState message="No notes found matching your criteria." />
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
             {notes.map((note) => (
               <NoteCard
                 key={note._id}

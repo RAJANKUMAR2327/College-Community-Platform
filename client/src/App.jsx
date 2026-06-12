@@ -13,7 +13,7 @@ import Marketplace from './pages/Marketplace'
 import Placement from './pages/Placement'
 import Profile from './pages/Profile'
 import Settings from './pages/Settings'
-
+import Notifications from './pages/Notifications'
 // Add inside Routes:
 
 export default function App() {
@@ -39,6 +39,7 @@ export default function App() {
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+        <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>
