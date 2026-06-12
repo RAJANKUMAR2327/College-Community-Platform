@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import useThemeStore from './store/themeStore'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -12,6 +14,12 @@ import Placement from './pages/Placement'
 import Profile from './pages/Profile'
 
 export default function App() {
+  const { initTheme } = useThemeStore()
+
+  useEffect(() => {
+    initTheme()
+  }, [])
+
   return (
     <BrowserRouter>
       <Toaster position="top-right" />
