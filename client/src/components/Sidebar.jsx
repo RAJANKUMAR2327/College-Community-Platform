@@ -5,8 +5,16 @@ import useThemeStore from '../store/themeStore'
 import {
   LayoutDashboard, FileText, Search, Calendar,
   ShoppingBag, Briefcase, User, Settings,
-  LogOut, Sun, Moon, Menu, X,
+  LogOut, Sun, Moon, Menu, X, TrendingUp,
+  Sparkles, BookOpen, Bot,
 } from 'lucide-react'
+
+const aiItems = [
+  { to: '/ai-study', icon: Bot, label: 'Study AI' },
+  { to: '/ai-quiz', icon: Sparkles, label: 'Quiz AI' },
+  { to: '/ai-career', icon: TrendingUp, label: 'Career AI' },
+  { to: '/ai-notes', icon: BookOpen, label: 'Note AI' },
+]
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -15,6 +23,8 @@ const navItems = [
   { to: '/events', icon: Calendar, label: 'Events' },
   { to: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
   { to: '/placement', icon: Briefcase, label: 'Placement' },
+  { to: '/placement-dashboard', icon: TrendingUp, label: 'Stats' },
+  { to: '/resume-builder', icon: FileText, label: 'Resume' },
 ]
 
 const bottomItems = [
@@ -69,6 +79,17 @@ function SidebarContent({ user, theme, toggleTheme, handleLogout, onClose }) {
             {label}
           </NavLink>
         ))}
+
+        {/* AI Tools Section */}
+        <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider px-2 mt-4 mb-2">
+          AI Tools
+        </p>
+        {aiItems.map(({ to, icon: Icon, label }) => (
+          <NavLink key={to} to={to} className={linkClass} onClick={onClose}>
+            <Icon size={16} />
+            {label}
+          </NavLink>
+        ))}
       </nav>
 
       {/* Dark mode toggle */}
@@ -85,16 +106,18 @@ function SidebarContent({ user, theme, toggleTheme, handleLogout, onClose }) {
       {/* User footer */}
       <div className="px-4 py-4 border-t border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2 mb-3">
-          {/* Replace the letter avatar with image support */}
           <div className="w-8 h-8 rounded-full overflow-hidden bg-indigo-50 dark:bg-indigo-900/50 flex items-center justify-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 shrink-0">
             {user?.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />): (
-                user?.name?.charAt(0) || 'U')
-            }
+              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+            ) : (
+              user?.name?.charAt(0) || 'U'
+            )}
           </div>
           <div className="min-w-0">
             <p className="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">{user?.name}</p>
-            <p className="text-[10px] text-gray-400 dark:text-gray-500">{user?.branch} · {user?.year}rd Year</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-500">
+              {user?.branch} · {user?.year ? `${user.year}rd Year` : ''}
+            </p>
           </div>
         </div>
         <button
@@ -163,48 +186,4 @@ export default function Sidebar() {
       </aside>
     </>
   )
-}
-export const changePassword = async (req, res) => {
-  try {
-    const { currentPassword, newPassword } = req.body
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: 'Both fields are required.' })
-    }
-
-    if (newPassword.length < 6) {
-      return res.status(400).json({ message: 'New password must be at least 6 characters.' })
-    }
-
-    const user = await User.findById(req.user._id).select('+password')
-    const isMatch = await user.matchPassword(currentPassword)
-
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Current password is incorrect.' })
-    }
-
-    user.password = newPassword
-    await user.save()
-
-    res.json({ message: 'Password changed successfully!' })
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
-}
-
-export const deleteAccount = async (req, res) => {
-  try {
-    const { password } = req.body
-    const user = await User.findById(req.user._id).select('+password')
-    const isMatch = await user.matchPassword(password)
-
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Password is incorrect.' })
-    }
-
-    await user.deleteOne()
-    res.json({ message: 'Account deleted successfully.' })
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
 }

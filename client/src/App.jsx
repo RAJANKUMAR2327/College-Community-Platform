@@ -14,7 +14,12 @@ import Placement from './pages/Placement'
 import Profile from './pages/Profile'
 import Settings from './pages/Settings'
 import Notifications from './pages/Notifications'
-// Add inside Routes:
+import PlacementDashboard from './pages/PlacementDashboard'
+import ResumeBuilder from './pages/ResumeBuilder'
+import AIStudyAssistant from './pages/AIStudyAssistant'
+import AIQuizGenerator from './pages/AIQuizGenerator'
+import AICareerAssistant from './pages/AICareerAssistant'
+import AINoteSummarizer from './pages/AINoteSummarizer'
 
 export default function App() {
   const { initTheme } = useThemeStore()
@@ -27,20 +32,30 @@ export default function App() {
     <BrowserRouter>
       <Toaster position="top-right" />
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Protected Routes */}
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
         <Route path="/lost-found" element={<ProtectedRoute><LostFound /></ProtectedRoute>} />
         <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
         <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
         <Route path="/placement" element={<ProtectedRoute><Placement /></ProtectedRoute>} />
+        <Route path="/placement-dashboard" element={<ProtectedRoute><PlacementDashboard /></ProtectedRoute>} />
+        <Route path="/resume-builder" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+        <Route path="/ai-study" element={<ProtectedRoute><AIStudyAssistant /></ProtectedRoute>} />
+        <Route path="/ai-quiz" element={<ProtectedRoute><AIQuizGenerator /></ProtectedRoute>} />
+        <Route path="/ai-career" element={<ProtectedRoute><AICareerAssistant /></ProtectedRoute>} />
+        <Route path="/ai-notes" element={<ProtectedRoute><AINoteSummarizer /></ProtectedRoute>} />
 
+        {/* Catch-all Route (Keep at the bottom) */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   )

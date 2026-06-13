@@ -14,6 +14,7 @@ import eventRoutes from './routes/eventRoutes.js'
 import listingRoutes from './routes/listingRoutes.js'
 import placementRoutes from './routes/placementRoutes.js'
 import searchRoutes from './routes/searchRoutes.js'
+import placementStatRoutes from './routes/placementStatRoutes.js'
 
 const app = express()
 
@@ -42,7 +43,7 @@ app.use('/api/lost-found', lostFoundRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/listings', listingRoutes)
 app.use('/api/placement', placementRoutes)
-
+app.use('/api/placement-stats', placementStatRoutes)
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
 app.use((err, req, res, next) => {
