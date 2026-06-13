@@ -20,6 +20,11 @@ import AIStudyAssistant from './pages/AIStudyAssistant'
 import AIQuizGenerator from './pages/AIQuizGenerator'
 import AICareerAssistant from './pages/AICareerAssistant'
 import AINoteSummarizer from './pages/AINoteSummarizer'
+import AdminRoute from './components/AdminRoute'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminUsers from './pages/admin/AdminUsers'
+import AdminNotes from './pages/admin/AdminNotes'
+import AdminComments from './pages/admin/AdminComments'
 
 export default function App() {
   const { initTheme } = useThemeStore()
@@ -53,6 +58,10 @@ export default function App() {
         <Route path="/ai-quiz" element={<ProtectedRoute><AIQuizGenerator /></ProtectedRoute>} />
         <Route path="/ai-career" element={<ProtectedRoute><AICareerAssistant /></ProtectedRoute>} />
         <Route path="/ai-notes" element={<ProtectedRoute><AINoteSummarizer /></ProtectedRoute>} />
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+        <Route path="/admin/notes" element={<AdminRoute><AdminNotes /></AdminRoute>} />
+        <Route path="/admin/comments" element={<AdminRoute><AdminComments /></AdminRoute>} />
 
         {/* Catch-all Route (Keep at the bottom) */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

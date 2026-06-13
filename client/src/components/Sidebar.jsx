@@ -6,7 +6,7 @@ import {
   LayoutDashboard, FileText, Search, Calendar,
   ShoppingBag, Briefcase, User, Settings,
   LogOut, Sun, Moon, Menu, X, TrendingUp,
-  Sparkles, BookOpen, Bot,
+  Sparkles, BookOpen, Bot, Shield, // <-- Added Shield icon
 } from 'lucide-react'
 
 const aiItems = [
@@ -39,6 +39,12 @@ function SidebarContent({ user, theme, toggleTheme, handleLogout, onClose }) {
      ${isActive
        ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-medium'
        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'}`
+
+  const adminLinkClass = ({ isActive }) =>
+    `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all
+     ${isActive
+       ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 font-medium'
+       : 'text-gray-500 dark:text-gray-400 hover:bg-red-50/50 dark:hover:bg-red-950/20 hover:text-red-600 dark:hover:text-red-400'}`
 
   return (
     <>
@@ -90,6 +96,19 @@ function SidebarContent({ user, theme, toggleTheme, handleLogout, onClose }) {
             {label}
           </NavLink>
         ))}
+
+        {/* Admin Section (Added here) */}
+        {user?.role === 'admin' && (
+          <>
+            <p className="text-[10px] font-semibold text-red-400 dark:text-red-500 uppercase tracking-wider px-2 mt-4 mb-2">
+              Admin
+            </p>
+            <NavLink to="/admin" className={adminLinkClass} onClick={onClose}>
+              <Shield size={16} />
+              Admin Panel
+            </NavLink>
+          </>
+        )}
       </nav>
 
       {/* Dark mode toggle */}
