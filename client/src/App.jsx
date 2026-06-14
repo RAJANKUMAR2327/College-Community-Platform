@@ -25,6 +25,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminUsers from './pages/admin/AdminUsers'
 import AdminNotes from './pages/admin/AdminNotes'
 import AdminComments from './pages/admin/AdminComments'
+import Landing from './pages/Landing'
 
 export default function App() {
   const { initTheme } = useThemeStore()
@@ -62,6 +63,16 @@ export default function App() {
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
         <Route path="/admin/notes" element={<AdminRoute><AdminNotes /></AdminRoute>} />
         <Route path="/admin/comments" element={<AdminRoute><AdminComments /></AdminRoute>} />
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={
+          useAuthStore.getState().token
+          ? <Navigate to="/dashboard" replace />
+          : <Navigate to="/landing" replace />
+          } />
+          function RootRedirect() {const { token } = useAuthStore()return <Navigate to={token ? '/dashboard' : '/landing'} replace />}
+        <Route path="/" element={<RootRedirect />} />
+        <Route path="/landing" element={<Landing />} />  
 
         {/* Catch-all Route (Keep at the bottom) */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
