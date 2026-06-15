@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState } from 'react'
 import Layout from '../components/Layout'
 import toast from 'react-hot-toast'
@@ -7,6 +8,7 @@ import {
 } from 'lucide-react'
 
 export default function AIQuizGenerator() {
+  useSection('notes')
   const [topic, setTopic] = useState('')
   const [difficulty, setDifficulty] = useState('medium')
   const [count, setCount] = useState(5)

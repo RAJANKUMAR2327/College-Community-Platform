@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
@@ -43,6 +44,7 @@ function SettingRow({ icon: Icon, label, description, children, danger }) {
 }
 
 export default function Settings() {
+  useSection('dashboard')
   const { user, logout, setAuth } = useAuthStore()
   const { theme, toggleTheme } = useThemeStore()
   const navigate = useNavigate()

@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState } from 'react'
 import Layout from '../components/Layout'
 import useAuthStore from '../store/authStore'
@@ -48,6 +49,7 @@ const careerTools = [
 ]
 
 export default function AICareerAssistant() {
+  useSection('placement')
   const { user } = useAuthStore()
   const [activeTool, setActiveTool] = useState(null)
   const [input, setInput] = useState('')

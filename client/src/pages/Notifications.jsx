@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
 import Layout from '../components/Layout'
@@ -25,6 +26,7 @@ function timeAgo(date) {
 }
 
 export default function Notifications() {
+  useSection('dashboard')
   const [notifications, setNotifications] = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [loading, setLoading] = useState(true)

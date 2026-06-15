@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState, useRef, useEffect } from 'react'
 import Layout from '../components/Layout'
 import api from '../api/axios'
@@ -45,6 +46,7 @@ function Message({ msg }) {
 }
 
 export default function AIStudyAssistant() {
+  useSection('notes')
   const [messages, setMessages] = useState([
     {
       role: 'assistant',

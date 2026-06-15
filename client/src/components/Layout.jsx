@@ -1,28 +1,59 @@
-import { motion } from 'framer-motion'
 import Sidebar from './Sidebar'
 import GlobalSearch from './GlobalSearch'
 import NotificationBell from './NotificationBell'
+import useSectionStore from '../store/sectionStore'
+import { getTheme } from '../styles/tokens'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useLocation } from 'react-router-dom'
 
 export default function Layout({ children }) {
+  const { currentSection } = useSectionStore()
+  const theme = getTheme(currentSection)
+  const location = useLocation()
+
   return (
-    <div className="flex min-h-screen bg-[#0a0a0f] dark:bg-[#0a0a0f]">
+    <div className={`flex min-h-screen transition-colors duration-500 ${theme.bg}`}>
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Topbar */}
-        <div className="sticky top-0 z-30 glass border-b border-white/5 px-4 md:px-6 py-3 flex items-center justify-end gap-3 mt-12 md:mt-0">
-          <GlobalSearch />
-          <NotificationBell />
+        {/* Topbar — changes color per section */}
+        <div className={`
+          sticky top-0 z-30 px-4 md:px-6 py-3
+          flex items-center justify-between
+          border-b backdrop-blur-xl
+          mt-12 md:mt-0
+          transition-all duration-500
+          ${theme.topbar} ${theme.topbarBorder}
+        `}>
+          <div className="flex items-center gap-3">
+            {/* Section indicator dot */}
+            <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${theme.gradient} hidden md:block`} />
+            <span className={`text-xs font-semibold capitalize hidden md:block ${theme.text}`}>
+              {currentSection === 'lostfound' ? 'Lost & Found' : currentSection}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <GlobalSearch />
+            <NotificationBell />
+          </div>
         </div>
 
-        {/* Page content */}
-        <motion.main
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="flex-1 p-4 md:p-6 overflow-y-auto"
-        >
-          {children}
-        </motion.main>
+        {/* Page content with fade transition */}
+        <AnimatePresence mode="wait">
+          <motion.main
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className={`
+              flex-1 p-4 md:p-6 overflow-y-auto
+              bg-gradient-to-b ${theme.pageGradient}
+              transition-all duration-500
+            `}
+          >
+            {children}
+          </motion.main>
+        </AnimatePresence>
       </div>
     </div>
   )

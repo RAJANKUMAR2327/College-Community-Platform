@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
 import Layout from '../components/Layout'
@@ -93,6 +94,7 @@ function CreateEventModal({ onClose, onSuccess }) {
 }
 
 export default function Events() {
+  useSection('events')   // ← ADD THIS
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)

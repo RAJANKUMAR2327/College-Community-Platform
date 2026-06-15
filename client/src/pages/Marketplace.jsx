@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
 import Layout from '../components/Layout'
@@ -88,6 +89,7 @@ function CreateListingModal({ onClose, onSuccess }) {
 }
 
 export default function Marketplace() {
+  useSection('marketplace')
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)

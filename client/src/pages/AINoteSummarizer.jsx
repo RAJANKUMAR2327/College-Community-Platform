@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState } from 'react'
 import Layout from '../components/Layout'
 import api from '../api/axios'
@@ -15,6 +16,7 @@ const outputTypes = [
 ]
 
 export default function AINoteSummarizer() {
+  useSection('notes')
   const [text, setText] = useState('')
   const [outputType, setOutputType] = useState('summary')
   const [result, setResult] = useState('')

@@ -1,10 +1,5 @@
-import EmptyState from '../components/EmptyState'
 import { useState, useEffect } from 'react'
-import api from '../api/axios'
-import Layout from '../components/Layout'
-import toast from 'react-hot-toast'
-import { CardSkeleton } from '../components/Skeleton'
-import Comments from '../components/Comments'
+import { motion } from 'framer-motion'
 import {
   Upload,
   Download,
@@ -13,8 +8,16 @@ import {
   Search,
   FileText,
   X,
-  MessageSquare,
 } from 'lucide-react'
+import api from '../api/axios'
+import Layout from '../components/Layout'
+import toast from 'react-hot-toast'
+import { CardSkeleton } from '../components/Skeleton'
+import EmptyState from '../components/EmptyState'
+import PageHeader from '../components/PageHeader'
+import { useSection } from '../hooks/useSection'
+import useSectionStore from '../store/sectionStore'
+import { getTheme } from '../styles/tokens'
 
 function UploadModal({ onClose, onSuccess }) {
   const [form, setForm] = useState({
@@ -218,84 +221,74 @@ function UploadModal({ onClose, onSuccess }) {
 }
 
 function NoteCard({ note, onLike, onBookmark, onDownload }) {
-  const [showComments, setShowComments] = useState(false)
+  const { currentSection } = useSectionStore()
+  const theme = getTheme(currentSection)
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-4 flex flex-col justify-between h-full">
-      <div>
-        <div className="flex items-start gap-3">
-          <div className="bg-indigo-50 p-2 rounded-lg">
-            <FileText size={18} className="text-indigo-500" />
-          </div>
-
-          <div className="flex-1">
-            <h3 className="font-semibold">{note.title}</h3>
-            <p className="text-sm text-gray-500">{note.subject}</p>
-          </div>
+    <motion.div
+      whileHover={{ y: -3, transition: { duration: 0.2 } }}
+      className={`bg-white dark:bg-gray-900 rounded-xl border p-4 transition-all duration-300 ${theme.card}`}
+      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
+    >
+      <div className="flex items-start gap-3">
+        <div className={`p-2.5 rounded-lg shrink-0 ${theme.icon}`}>
+          <FileText size={18} className={theme.text.split(' ')[0]} />
         </div>
-
-        {note.description && (
-          <p className="text-sm text-gray-500 mt-2">
-            {note.description}
-          </p>
-        )}
-
-        <div className="flex flex-wrap gap-2 mt-3">
-          <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">
-            {note.branch}
-          </span>
-
-          <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-            Year {note.year}
-          </span>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{note.title}</h3>
+          <p className="text-xs text-gray-500 mt-0.5">{note.subject}</p>
         </div>
       </div>
 
-      <div>
-        <div className="flex justify-between items-center mt-4 border-t pt-3">
-          <span className="text-xs text-gray-500">
-            {note.uploader?.name}
+      {note.description && (
+        <p className="text-xs text-gray-500 mt-2 line-clamp-2">{note.description}</p>
+      )}
+
+      <div className="flex flex-wrap gap-1 mt-3">
+        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${theme.tag}`}>
+          {note.branch}
+        </span>
+        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${theme.tag}`}>
+          Year {note.year}
+        </span>
+        {note.tags?.slice(0, 2).map(tag => (
+          <span key={tag} className={`text-[10px] px-2 py-0.5 rounded-full ${theme.tag}`}>
+            {tag}
           </span>
-
-          <div className="flex gap-3 text-gray-600">
-            <button 
-              onClick={() => setShowComments(!showComments)} 
-              className={`hover:text-indigo-600 transition-colors ${showComments ? 'text-indigo-600' : ''}`}
-              title="Toggle Comments"
-            >
-              <MessageSquare size={16} />
-            </button>
-
-            <button onClick={() => onLike(note._id)} className="hover:text-red-500 transition-colors">
-              <Heart size={16} />
-            </button>
-
-            <button onClick={() => onBookmark(note._id)} className="hover:text-amber-500 transition-colors">
-              <Bookmark size={16} />
-            </button>
-
-            <button
-              onClick={() =>
-                onDownload(note._id, note.fileUrl)
-              }
-              className="hover:text-green-600 transition-colors"
-            >
-              <Download size={16} />
-            </button>
-          </div>
-        </div>
-
-        {showComments && (
-          <div className="mt-4 border-t pt-3 transition-all">
-            <Comments targetId={note._id} targetType="note" />
-          </div>
-        )}
+        ))}
       </div>
-    </div>
+
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-50 dark:border-gray-800">
+        <div className="flex items-center gap-1">
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${theme.icon} ${theme.text.split(' ')[0]}`}>
+            {note.uploader?.name?.charAt(0)}
+          </div>
+          <span className="text-[11px] text-gray-500">{note.uploader?.name}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => onLike(note._id)}
+            className={`flex items-center gap-1 text-[11px] text-gray-400 hover:${theme.text.split(' ')[0].replace('text-','text-')} transition-colors`}>
+            <Heart size={13} /> {note.likes?.length || 0}
+          </button>
+          <button onClick={() => onBookmark(note._id)}
+            className="text-gray-400 hover:text-indigo-500 transition-colors">
+            <Bookmark size={13} />
+          </button>
+          <button onClick={() => onDownload(note._id, note.fileUrl)}
+            className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-green-500 transition-colors">
+            <Download size={13} /> {note.downloadCount || 0}
+          </button>
+        </div>
+      </div>
+    </motion.div>
   )
 }
 
 export default function Notes() {
+  useSection('notes')
+  const { currentSection } = useSectionStore()
+  const theme = getTheme(currentSection)
+
   const [notes, setNotes] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -379,53 +372,44 @@ export default function Notes() {
         />
       )}
 
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Notes</h1>
+      <PageHeader
+        title="Notes"
+        subtitle={`${pagination.total || 0} notes shared by students`}
+        action={{ label: 'Upload Note', icon: Upload, onClick: () => setShowModal(true) }}
+      />
 
-          <p className="text-gray-500 text-sm">
-            {pagination.total || 0} notes shared
-          </p>
-        </div>
-
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-        >
-          <Upload size={16} />
-          Upload Note
-        </button>
-      </div>
-
-      <div className="bg-white rounded-xl border p-4 mb-6 flex gap-3 flex-wrap">
-        <div className="flex items-center gap-2 flex-1 min-w-52">
-          <Search size={16} />
-
+      <div className={`bg-white dark:bg-gray-900 rounded-xl border p-4 mb-6 flex flex-wrap gap-3 ${theme.topbarBorder}`}>
+        <div className="flex items-center gap-2 flex-1 min-w-48">
+          <Search size={15} className="text-gray-400 shrink-0" />
           <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search notes..."
-            className="flex-1 outline-none"
+            className="flex-1 text-sm outline-none bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
           />
         </div>
-
-        <select
-          value={filters.branch}
-          onChange={(e) =>
-            setFilters((prev) => ({
-              ...prev,
-              branch: e.target.value,
-            }))
-          }
-          className="border rounded-lg px-3 py-2"
-        >
-          <option value="">All Branches</option>
-          <option value="CSE">CSE</option>
-          <option value="ECE">ECE</option>
-          <option value="EEE">EEE</option>
-          <option value="Mechanical">Mechanical</option>
-          <option value="Civil">Civil</option>
-        </select>
+        <div className="flex flex-wrap gap-2">
+          {['CSE','ECE','EEE','Mechanical'].map(b => (
+            <button key={b}
+              onClick={() => setFilters(f => ({ ...f, branch: f.branch === b ? '' : b }))}
+              className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all
+                ${filters.branch === b
+                  ? theme.filterActive + ' border-transparent'
+                  : theme.filter + ' bg-white dark:bg-gray-990 hover:opacity-80'}`}>
+              {b}
+            </button>
+          ))}
+          {[1,2,3,4,5].map(y => (
+            <button key={y}
+              onClick={() => setFilters(f => ({ ...f, year: f.year === y.toString() ? '' : y.toString() }))}
+              className={`text-xs px-3 py-1.5 rounded-lg border font-medium transition-all
+                ${filters.year === y.toString()
+                  ? theme.filterActive + ' border-transparent'
+                  : theme.filter + ' bg-white dark:bg-gray-900 hover:opacity-80'}`}>
+              Y{y}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (

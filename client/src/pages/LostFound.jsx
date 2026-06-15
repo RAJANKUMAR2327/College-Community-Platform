@@ -1,9 +1,11 @@
+import { useSection } from '../hooks/useSection'
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
 import Layout from '../components/Layout'
 import toast from 'react-hot-toast'
 import { Plus, Search, X, MapPin, Clock, CheckCircle } from 'lucide-react'
 import EmptyState from '../components/EmptyState'
+
 
 const categories = ['electronics', 'books', 'clothing', 'accessories', 'documents', 'other']
 
@@ -80,6 +82,7 @@ function PostModal({ onClose, onSuccess }) {
 }
 
 export default function LostFound() {
+  useSection('lostfound')   // ← ADD THIS
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)

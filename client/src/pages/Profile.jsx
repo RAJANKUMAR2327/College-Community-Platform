@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState, useRef, useEffect } from 'react'
 import api from '../api/axios'
 import Layout from '../components/Layout'
@@ -12,6 +13,7 @@ import {
 const branches = ['CSE', 'ECE', 'EEE', 'Mechanical', 'Chemical', 'Civil', 'Pharmacy', 'Other']
 
 export default function Profile() {
+  useSection('dashboard')
   const { user, setAuth } = useAuthStore()
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({

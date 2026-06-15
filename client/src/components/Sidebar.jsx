@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import useAuthStore from '../store/authStore'
 import useThemeStore from '../store/themeStore'
+import useSectionStore from '../store/sectionStore'
 import {
   LayoutDashboard, FileText, Search, Calendar,
   ShoppingBag, Briefcase, User, Settings,
@@ -11,91 +12,111 @@ import {
 } from 'lucide-react'
 
 const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/notes', icon: FileText, label: 'Notes' },
-  { to: '/lost-found', icon: Search, label: 'Lost & Found' },
-  { to: '/events', icon: Calendar, label: 'Events' },
-  { to: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
-  { to: '/placement', icon: Briefcase, label: 'Placement' },
-  { to: '/placement-dashboard', icon: TrendingUp, label: 'Stats' },
-  { to: '/resume-builder', icon: FileText, label: 'Resume' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', section: 'dashboard', dot: 'bg-indigo-500' },
+  { to: '/notes', icon: FileText, label: 'Notes', section: 'notes', dot: 'bg-indigo-500' },
+  { to: '/lost-found', icon: Search, label: 'Lost & Found', section: 'lostfound', dot: 'bg-amber-500' },
+  { to: '/events', icon: Calendar, label: 'Events', section: 'events', dot: 'bg-green-500' },
+  { to: '/marketplace', icon: ShoppingBag, label: 'Marketplace', section: 'marketplace', dot: 'bg-pink-500' },
+  { to: '/placement', icon: Briefcase, label: 'Placement', section: 'placement', dot: 'bg-blue-500' },
+  { to: '/placement-dashboard', icon: TrendingUp, label: 'Stats', section: 'placement', dot: 'bg-blue-500' },
+  { to: '/resume-builder', icon: FileText, label: 'Resume', section: 'placement', dot: 'bg-blue-500' },
 ]
 
 const aiItems = [
-  { to: '/ai-study', icon: Bot, label: 'Study AI' },
-  { to: '/ai-quiz', icon: Sparkles, label: 'Quiz AI' },
-  { to: '/ai-career', icon: TrendingUp, label: 'Career AI' },
-  { to: '/ai-notes', icon: BookOpen, label: 'Note AI' },
+  { to: '/ai-study', icon: Bot, label: 'Study AI', section: 'notes', dot: 'bg-purple-500' },
+  { to: '/ai-quiz', icon: Sparkles, label: 'Quiz AI', section: 'notes', dot: 'bg-purple-500' },
+  { to: '/ai-career', icon: TrendingUp, label: 'Career AI', section: 'placement', dot: 'bg-purple-500' },
+  { to: '/ai-notes', icon: BookOpen, label: 'Note AI', section: 'notes', dot: 'bg-purple-500' },
 ]
 
 const bottomItems = [
-  { to: '/profile', icon: User, label: 'Profile' },
-  { to: '/settings', icon: Settings, label: 'Settings' },
-  { to: '/certificate', icon: Award, label: 'Certificate' },
+  { to: '/profile', icon: User, label: 'Profile', section: 'dashboard', dot: 'bg-gray-400' },
+  { to: '/settings', icon: Settings, label: 'Settings', section: 'dashboard', dot: 'bg-gray-400' },
+  { to: '/certificate', icon: Award, label: 'Certificate', section: 'dashboard', dot: 'bg-amber-400' },
 ]
 
-function SidebarContent({ user, theme, toggleTheme, handleLogout, onClose }) {
-  const linkClass = ({ isActive }) =>
-    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 group relative
-     ${isActive
-       ? 'bg-indigo-500/10 text-indigo-400 font-medium'
-       : 'text-gray-500 dark:text-gray-400 hover:bg-white/5 dark:hover:bg-white/5 hover:text-gray-200'}`
+const sectionActiveStyles = {
+  dashboard: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
+  notes: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
+  lostfound: 'bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400',
+  events: 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+  marketplace: 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400',
+  placement: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+}
 
-  const NavSection = ({ title, items }) => (
+function NavGroup({ title, items, setSection, onClose, user }) {
+  const { currentSection } = useSectionStore()
+
+  return (
     <>
-      <p className="text-[10px] font-semibold text-gray-600 dark:text-gray-700 uppercase tracking-wider px-3 mb-1 mt-4">
+      <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider px-3 mb-1 mt-4 first:mt-2">
         {title}
       </p>
-      {items.map(({ to, icon: Icon, label }) => (
-        <NavLink key={to} to={to} className={linkClass} onClick={onClose}>
+      {items.map(({ to, icon: Icon, label, section, dot }) => (
+        <NavLink
+          key={to} to={to}
+          onClick={() => { setSection(section); onClose() }}
+          className={({ isActive }) =>
+            `flex items-center gap-2.5 px-3 py-2.5 mx-1 rounded-xl text-sm transition-all duration-200 relative group
+             ${isActive
+               ? sectionActiveStyles[section] + ' font-medium'
+               : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100'}`
+          }
+        >
           {({ isActive }) => (
             <>
-              {isActive && (
-                <motion.div
-                  layoutId="activeNav"
-                  className="absolute inset-0 bg-indigo-500/10 rounded-xl"
-                  transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
-                />
-              )}
-              <Icon size={16} className="relative z-10 shrink-0" />
-              <span className="relative z-10">{label}</span>
+              {/* Colored dot indicator */}
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-200 ${isActive ? dot : 'bg-gray-300 dark:bg-gray-600 group-hover:bg-gray-400'}`} />
+              <Icon size={15} className="shrink-0" />
+              <span>{label}</span>
             </>
           )}
         </NavLink>
       ))}
     </>
   )
+}
+
+function SidebarInner({ user, theme, toggleTheme, handleLogout, onClose }) {
+  const { setSection } = useSectionStore()
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-white dark:bg-gray-900">
       {/* Logo */}
-      <div className="px-4 py-5 border-b border-white/5 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center text-white font-bold text-xs animate-pulse-glow">
+      <div className="px-4 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xs shadow-lg">
             CC
           </div>
           <div>
-            <p className="text-sm font-bold text-white">CampusConnect</p>
-            <p className="text-[10px] text-gray-600 truncate max-w-[110px]">{user?.college}</p>
+            <p className="text-sm font-bold text-gray-900 dark:text-gray-100">CampusConnect</p>
+            <p className="text-[9px] text-gray-400 truncate max-w-[110px]">{user?.college}</p>
           </div>
         </div>
-        <button onClick={onClose} className="md:hidden text-gray-600 hover:text-gray-400 transition-colors">
-          <X size={18} />
+        <button onClick={onClose} className="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+          <X size={16} />
         </button>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 py-3 overflow-y-auto space-y-0.5">
-        <NavSection title="Main" items={navItems} />
-        <NavSection title="AI Tools" items={aiItems} />
-        <NavSection title="You" items={bottomItems} />
+      <nav className="flex-1 px-1 py-2 overflow-y-auto">
+        <NavGroup title="Main" items={navItems} setSection={setSection} onClose={onClose} user={user} />
+        <NavGroup title="AI Tools" items={aiItems} setSection={setSection} onClose={onClose} user={user} />
+        <NavGroup title="You" items={bottomItems} setSection={setSection} onClose={onClose} user={user} />
+
         {user?.role === 'admin' && (
           <>
-            <p className="text-[10px] font-semibold text-red-500/60 uppercase tracking-wider px-3 mb-1 mt-4">
+            <p className="text-[10px] font-semibold text-red-400/60 uppercase tracking-wider px-3 mb-1 mt-4">
               Admin
             </p>
-            <NavLink to="/admin" className={linkClass} onClick={onClose}>
-              <Shield size={16} />
+            <NavLink to="/admin"
+              onClick={() => { setSection('dashboard'); onClose() }}
+              className={({ isActive }) =>
+                `flex items-center gap-2.5 px-3 py-2.5 mx-1 rounded-xl text-sm transition-all duration-200
+                 ${isActive ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-medium' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}`
+              }>
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              <Shield size={15} />
               Admin Panel
             </NavLink>
           </>
@@ -103,42 +124,38 @@ function SidebarContent({ user, theme, toggleTheme, handleLogout, onClose }) {
       </nav>
 
       {/* Theme toggle */}
-      <div className="px-3 py-2 border-t border-white/5">
+      <div className="px-3 py-2 border-t border-gray-100 dark:border-gray-800">
         <button
           onClick={toggleTheme}
-          className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:bg-white/5 hover:text-gray-300 transition-all duration-200"
+          className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
         >
           {theme === 'light'
-            ? <Moon size={15} className="text-indigo-400" />
-            : <Sun size={15} className="text-amber-400" />
+            ? <Moon size={14} className="text-indigo-400" />
+            : <Sun size={14} className="text-amber-400" />
           }
           {theme === 'light' ? 'Dark mode' : 'Light mode'}
         </button>
       </div>
 
       {/* User footer */}
-      <div className="px-3 py-3 border-t border-white/5">
-        <div className="flex items-center gap-2.5 px-2 mb-2">
-          <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 ring-2 ring-indigo-500/30">
+      <div className="px-3 py-3 border-t border-gray-100 dark:border-gray-800">
+        <div className="flex items-center gap-2 px-2 mb-2">
+          <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 ring-2 ring-indigo-100 dark:ring-indigo-900">
             {user?.avatar
               ? <img src={user.avatar} alt="" className="w-full h-full object-cover" />
-              : (
-                <div className="w-full h-full gradient-bg flex items-center justify-center text-white text-xs font-bold">
-                  {user?.name?.charAt(0)}
-                </div>
-              )
+              : <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold">{user?.name?.charAt(0)}</div>
             }
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-gray-200 truncate">{user?.name}</p>
-            <p className="text-[10px] text-gray-600">{user?.branch} · Y{user?.year}</p>
+            <p className="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">{user?.name}</p>
+            <p className="text-[9px] text-gray-400">{user?.branch} · Y{user?.year}</p>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 text-xs text-gray-600 hover:text-red-400 transition-colors w-full px-2 py-1.5 rounded-lg hover:bg-red-500/5"
+          className="flex items-center gap-2 text-xs text-gray-400 hover:text-red-500 transition-colors w-full px-2 py-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10"
         >
-          <LogOut size={13} /> Logout
+          <LogOut size={12} /> Logout
         </button>
       </div>
     </div>
@@ -161,13 +178,13 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile topbar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 glass border-b border-white/5 px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 gradient-bg rounded-lg flex items-center justify-center text-white font-bold text-xs">CC</div>
-          <span className="text-sm font-bold text-white">CampusConnect</span>
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs">CC</div>
+          <span className="text-sm font-bold text-gray-900 dark:text-gray-100">CampusConnect</span>
         </div>
-        <button onClick={() => setMobileOpen(true)} className="text-gray-400 hover:text-white transition-colors">
-          <Menu size={22} />
+        <button onClick={() => setMobileOpen(true)} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 p-1">
+          <Menu size={20} />
         </button>
       </div>
 
@@ -178,7 +195,7 @@ export default function Sidebar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="md:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
+            className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
             onClick={() => setMobileOpen(false)}
           />
         )}
@@ -191,17 +208,17 @@ export default function Sidebar() {
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
-            transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-            className="md:hidden fixed top-0 left-0 h-full w-64 z-50 bg-[#0f0f17] border-r border-white/5"
+            transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
+            className="md:hidden fixed top-0 left-0 h-full w-60 z-50 shadow-2xl"
           >
-            <SidebarContent {...props} />
+            <SidebarInner {...props} />
           </motion.aside>
         )}
       </AnimatePresence>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-56 shrink-0 bg-[#0f0f17] border-r border-white/5 flex-col h-screen sticky top-0">
-        <SidebarContent {...props} />
+      <aside className="hidden md:block w-56 shrink-0 h-screen sticky top-0 shadow-sm">
+        <SidebarInner {...props} />
       </aside>
     </>
   )

@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState, useRef } from 'react'
 import Layout from '../components/Layout'
 import useAuthStore from '../store/authStore'
@@ -44,6 +45,7 @@ function Section({ title, children }) {
 }
 
 export default function ResumeBuilder() {
+   useSection('placement')
   const { user } = useAuthStore()
   const [resume, setResume] = useState({
     ...defaultResume,

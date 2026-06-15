@@ -1,3 +1,4 @@
+import { useSection } from '../hooks/useSection'
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
 import Layout from '../components/Layout'
@@ -131,6 +132,7 @@ function CreatePostModal({ onClose, onSuccess }) {
 }
 
 export default function Placement() {
+  useSection('placement')
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
