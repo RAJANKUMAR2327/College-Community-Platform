@@ -16,6 +16,7 @@ import placementRoutes from './routes/placementRoutes.js'
 import searchRoutes from './routes/searchRoutes.js'
 import placementStatRoutes from './routes/placementStatRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
+import postRoutes from './routes/postRoutes.js'
 
 
 const app = express()
@@ -47,6 +48,7 @@ app.use('/api/listings', listingRoutes)
 app.use('/api/placement', placementRoutes)
 app.use('/api/placement-stats', placementStatRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/posts', postRoutes)
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
 app.use((err, req, res, next) => {

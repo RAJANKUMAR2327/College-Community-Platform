@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import useAuthStore from '../store/authStore'
 import useThemeStore from '../store/themeStore'
 import useSectionStore from '../store/sectionStore'
+import { Rss } from 'lucide-react'
+
 import {
   LayoutDashboard, FileText, Search, Calendar,
   ShoppingBag, Briefcase, User, Settings,
@@ -20,6 +22,7 @@ const navItems = [
   { to: '/placement', icon: Briefcase, label: 'Placement', section: 'placement', dot: 'bg-blue-500' },
   { to: '/placement-dashboard', icon: TrendingUp, label: 'Stats', section: 'placement', dot: 'bg-blue-500' },
   { to: '/resume-builder', icon: FileText, label: 'Resume', section: 'placement', dot: 'bg-blue-500' },
+  { to: '/feed', icon: Rss, label: 'Campus Feed', section: 'dashboard', dot: 'bg-indigo-500' },
 ]
 
 const aiItems = [

@@ -26,6 +26,7 @@ import AdminUsers from './pages/admin/AdminUsers'
 import AdminNotes from './pages/admin/AdminNotes'
 import AdminComments from './pages/admin/AdminComments'
 import Landing from './pages/Landing'
+import Feed from './pages/Feed'
 
 export default function App() {
   const { initTheme } = useThemeStore()
@@ -65,6 +66,7 @@ export default function App() {
         <Route path="/admin/comments" element={<AdminRoute><AdminComments /></AdminRoute>} />
         <Route path="/landing" element={<Landing />} />
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
         <Route path="/" element={
           useAuthStore.getState().token
           ? <Navigate to="/dashboard" replace />
