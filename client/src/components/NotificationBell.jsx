@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom' // Added Link here
 import api from '../api/axios'
-import { Bell, CheckCheck } from 'lucide-react'
+import { Bell, CheckCheck, MessageCircle } from 'lucide-react' // Added MessageCircle here
+import useSocketStore from '../store/socketStore'
 
 const typeEmoji = {
   comment: '💬', like: '❤️', event: '📅',
@@ -18,6 +19,7 @@ function timeAgo(date) {
 
 export default function NotificationBell() {
   const [notifications, setNotifications] = useState([])
+  const { unreadMessages } = useSocketStore() // Integrated as requested
   const [unreadCount, setUnreadCount] = useState(0)
   const [open, setOpen] = useState(false)
   const ref = useRef()
@@ -55,7 +57,19 @@ export default function NotificationBell() {
   }
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative flex items-center gap-2"> {/* Added flex layout container */}
+      
+      {/* 1. Chat Indicator Link (Placed next to bell icon) */}
+      {unreadMessages > 0 && (
+        <Link to="/chat" className="relative p-2 text-gray-500 hover:text-green-500 transition-colors">
+          <MessageCircle size={18} />
+          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-green-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+            {unreadMessages > 9 ? '9+' : unreadMessages}
+          </span>
+        </Link>
+      )}
+
+      {/* 2. Notification Bell Trigger */}
       <button
         onClick={() => setOpen(!open)}
         className="relative p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
@@ -68,6 +82,7 @@ export default function NotificationBell() {
         )}
       </button>
 
+      {/* Dropdown Menu */}
       {open && (
         <div className="absolute right-0 top-10 w-80 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 z-50 overflow-hidden">
           {/* Header */}
