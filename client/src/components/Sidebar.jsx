@@ -6,6 +6,7 @@ import useThemeStore from '../store/themeStore'
 import useSectionStore from '../store/sectionStore'
 import { Rss } from 'lucide-react'
 import { MessageCircle } from 'lucide-react'
+import { Users } from 'lucide-react'
 
 import {
   LayoutDashboard, FileText, Search, Calendar,
@@ -25,6 +26,7 @@ const navItems = [
   { to: '/resume-builder', icon: FileText, label: 'Resume', section: 'placement', dot: 'bg-blue-500' },
   { to: '/feed', icon: Rss, label: 'Campus Feed', section: 'dashboard', dot: 'bg-indigo-500' },
   { to: '/chat', icon: MessageCircle, label: 'Messages', section: 'dashboard', dot: 'bg-green-500' },
+  { to: '/study-groups', icon: Users, label: 'Study Groups', section: 'notes', dot: 'bg-indigo-500' },
 ]
 
 const aiItems = [
