@@ -25,6 +25,7 @@ import postRoutes from './routes/postRoutes.js'
 import chatRoutes from './routes/chatRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
 import studyGroupRoutes from './routes/studyGroupRoutes.js'
+import questionRoutes from './routes/questionRoutes.js'
 
 
 import Message from './models/Message.js'
@@ -295,6 +296,7 @@ app.use('/api/posts', postRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/study-groups', studyGroupRoutes)
+app.use('/api/questions', questionRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
