@@ -6,6 +6,8 @@ import Layout from '../components/Layout'
 import useAuthStore from '../store/authStore'
 import useThemeStore from '../store/themeStore'
 import toast from 'react-hot-toast'
+import { usePushNotifications } from '../hooks/usePushNotifications'
+import { Smartphone } from 'lucide-react'
 import {
   Lock, Trash2, Moon, Sun, Bell,
   Shield, ChevronRight, Eye, EyeOff,
@@ -118,6 +120,36 @@ export default function Settings() {
     navigate('/login')
     toast.success('Logged out successfully!')
   }
+
+const { subscribed, loading: pushLoading, supported, subscribe: enablePush, unsubscribe: disablePush } = usePushNotifications()
+
+// Add inside the Notifications Section, before the per-category toggles:
+{supported ? (
+  <SettingRow
+    icon={Smartphone}
+    label="Push Notifications"
+    description="Get notified even when the app is closed"
+  >
+    <button
+      onClick={subscribed ? disablePush : enablePush}
+      disabled={pushLoading}
+      className={`relative w-11 h-6 rounded-full transition-colors duration-200 disabled:opacity-50
+        ${subscribed ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'}`}
+    >
+      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200
+        ${subscribed ? 'translate-x-5' : 'translate-x-0'}`}
+      />
+    </button>
+  </SettingRow>
+) : (
+  <SettingRow
+    icon={Smartphone}
+    label="Push Notifications"
+    description="Not supported on this browser/device"
+  >
+    <span className="text-xs text-gray-400">N/A</span>
+  </SettingRow>
+)}
 
   const PasswordInput = ({ field, placeholder, value, onChange }) => (
     <div className="relative">

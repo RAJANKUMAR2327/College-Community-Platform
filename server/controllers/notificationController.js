@@ -1,4 +1,5 @@
 import Notification from '../models/Notification.js'
+import { sendPushToUser } from '../utils/webPush.js'
 
 export const getNotifications = async (req, res) => {
   try {
@@ -61,5 +62,19 @@ export const createNotification = async ({
   try {
     if (recipient.toString() === actor?.toString()) return // don't notify yourself
     await Notification.create({ recipient, type, title, message, link, actor })
+  } catch {}
+}
+
+export const createNotification = async ({
+  recipient, type, title, message, link, actor
+}) => {
+  try {
+    if (recipient.toString() === actor?.toString()) return
+    const notif = await Notification.create({ recipient, type, title, message, link, actor })
+
+    // Send push notification (fire and forget)
+    sendPushToUser(recipient, { title, message, link, tag: type })
+
+    return notif
   } catch {}
 }

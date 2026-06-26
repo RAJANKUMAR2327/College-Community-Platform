@@ -31,6 +31,7 @@ import questionRoutes from './routes/questionRoutes.js'
 import mentorshipRoutes from './routes/mentorshipRoutes.js'
 import collabDocRoutes from './routes/collabDocRoutes.js'
 import gamificationRoutes from './routes/gamificationRoutes.js'
+import pushRoutes from './routes/pushRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -408,6 +409,7 @@ app.use('/api/clubs', clubRoutes)
 app.use('/api/mentorship', mentorshipRoutes)
 app.use('/api/collab-docs', collabDocRoutes)
 app.use('/api/gamification', gamificationRoutes)
+app.use('/api/push', pushRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 

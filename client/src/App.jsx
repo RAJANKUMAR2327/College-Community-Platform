@@ -15,6 +15,8 @@ import AIConceptExplainer from './pages/AIConceptExplainer'
 import AIEssayHelper from './pages/AIEssayHelper'
 import AITranslator from './pages/AITranslator'
 import Leaderboard from './pages/Leaderboard'
+import PushPermissionBanner from './components/PushPermissionBanner'
+
 
 
 // ... all your page imports ..
@@ -59,6 +61,8 @@ export default function App() {
     <BrowserRouter>
       <Toaster position="top-right" />
       <PWAInstallBanner />
+      <PushPermissionBanner />
+
       <Routes>
         <Route path="/" element={<RootRedirect />} />
         <Route path="/landing" element={<Landing />} />
