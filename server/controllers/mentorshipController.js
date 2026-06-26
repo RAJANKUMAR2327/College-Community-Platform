@@ -369,6 +369,8 @@ export const completeSession = async (req, res) => {
         await mentorProfile.save()
       }
     }
+    await awardXP(session.mentee, 'MENTORSHIP_SESSION', 'mentorshipSessions')
+await awardXP(session.mentor, 'MENTORSHIP_SESSION', 'mentorshipSessions')
 
     res.json({ message: 'Session completed!', session })
   } catch (err) {

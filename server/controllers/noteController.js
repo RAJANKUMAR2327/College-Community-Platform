@@ -1,5 +1,6 @@
 import Note from '../models/Note.js'
 import { deleteFromCloudinary } from '../utils/cloudinary.js'
+import { awardXP } from '../utils/xpEngine.js'
 
 // ─── UPLOAD NOTE ──────────────────────────────────────────────────
 export const uploadNote = async (req, res) => {
@@ -26,6 +27,7 @@ export const uploadNote = async (req, res) => {
     })
 
     await note.populate('uploader', 'name branch year avatar')
+    await awardXP(req.user._id, 'UPLOAD_NOTE', 'notesUploaded')
 
     res.status(201).json({ message: 'Note uploaded successfully!', note })
   } catch (err) {
@@ -113,6 +115,7 @@ export const trackDownload = async (req, res) => {
     )
 
     if (!note) return res.status(404).json({ message: 'Note not found.' })
+      await awardXP(req.user._id, 'DOWNLOAD_NOTE', 'notesDownloaded')
 
     res.json({ downloadUrl: note.fileUrl, downloadCount: note.downloadCount })
   } catch (err) {

@@ -11,6 +11,9 @@ import { HelpCircle } from 'lucide-react'
 import { Award } from 'lucide-react'
 import { UserCheck } from 'lucide-react'
 import { Sparkles as SparklesIcon } from 'lucide-react'
+import XPBar from './XPBar'
+import { Trophy } from 'lucide-react'
+
 import {
   LayoutDashboard, FileText, Search, Calendar,
   ShoppingBag, Briefcase, User, Settings,
@@ -34,6 +37,7 @@ const navItems = [
   { to: '/clubs', icon: Award, label: 'Student Clubs', section: 'events', dot: 'bg-green-500' },
   { to: '/mentorship', icon: UserCheck, label: 'Mentorship', section: 'placement', dot: 'bg-blue-500' },
   { to: '/ai-tools', icon: SparklesIcon, label: 'AI Tools Hub', section: 'notes', dot: 'bg-purple-500' },
+  { to: '/leaderboard', icon: Trophy, label: 'Leaderboard', section: 'dashboard', dot: 'bg-amber-500' },
 ]
 
 const aiItems = [
@@ -136,6 +140,9 @@ function SidebarInner({ user, theme, toggleTheme, handleLogout, onClose }) {
           </>
         )}
       </nav>
+
+      // Add before the theme toggle div:
+      <div className="px-2 py-2"> <XPBar /> </div>
 
       {/* Theme toggle */}
       <div className="px-3 py-2 border-t border-gray-100 dark:border-gray-800">

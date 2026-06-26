@@ -28,6 +28,7 @@ export const addQuestion = async (req, res) => {
     })
 
     await q.populate('postedBy', 'name branch year')
+    await awardXP(req.user._id, 'ADD_QUESTION', 'questionsAdded')
     res.status(201).json({ message: 'Question added!', question: q })
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -153,6 +154,7 @@ export const submitAttempt = async (req, res) => {
         timeTaken: a.timeTaken || 0,
       }
     })
+    await awardXP(req.user._id, 'COMPLETE_QUIZ', 'quizzesCompleted')
 
     // Update question stats
     for (const a of results) {

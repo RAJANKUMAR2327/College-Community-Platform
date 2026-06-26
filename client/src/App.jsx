@@ -14,6 +14,7 @@ import AIToolsHub from './pages/AIToolsHub'
 import AIConceptExplainer from './pages/AIConceptExplainer'
 import AIEssayHelper from './pages/AIEssayHelper'
 import AITranslator from './pages/AITranslator'
+import Leaderboard from './pages/Leaderboard'
 
 
 // ... all your page imports ..
@@ -96,6 +97,7 @@ export default function App() {
         <Route path="/ai-explain" element={<ProtectedRoute><AIConceptExplainer /></ProtectedRoute>} />
         <Route path="/ai-essay" element={<ProtectedRoute><AIEssayHelper /></ProtectedRoute>} />
         <Route path="/ai-translate" element={<ProtectedRoute><AITranslator /></ProtectedRoute>} />
+        <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>

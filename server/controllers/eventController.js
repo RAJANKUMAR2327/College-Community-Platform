@@ -18,6 +18,7 @@ export const createEvent = async (req, res) => {
     })
 
     await event.populate('createdBy', 'name branch year avatar')
+    await awardXP(req.user._id, 'CREATE_EVENT', 'eventsCreated')
     res.status(201).json({ message: 'Event created!', event })
   } catch (err) {
     res.status(500).json({ message: err.message })
@@ -79,6 +80,7 @@ export const toggleAttendance = async (req, res) => {
     } else {
       if (event.maxParticipants && event.attendees.length >= event.maxParticipants) {
         return res.status(400).json({ message: 'Event is full.' })
+        if (!isAttending) await awardXP(req.user._id, 'ATTEND_EVENT', 'eventsAttended')
       }
       event.attendees.push(userId)
     }

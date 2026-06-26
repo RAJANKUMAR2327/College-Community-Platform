@@ -10,6 +10,7 @@ export const createPost = async (req, res) => {
     } = req.body
 
     const images = req.files ? req.files.map(f => f.path) : []
+    await awardXP(req.user._id, 'CREATE_POST', 'postsCreated')
 
     // Only admin/faculty can make announcements
     if (isAnnouncement && !['admin', 'faculty'].includes(req.user.role)) {

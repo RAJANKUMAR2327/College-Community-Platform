@@ -72,6 +72,7 @@ export const markResolved = async (req, res) => {
 
     post.status = 'resolved'
     await post.save()
+    await awardXP(req.user._id, 'RESOLVE_LOST_FOUND', 'lostFoundResolved')
     res.json({ message: 'Marked as resolved!', post })
   } catch (err) {
     res.status(500).json({ message: err.message })

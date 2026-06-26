@@ -143,7 +143,9 @@ export const joinGroup = async (req, res) => {
           actor: req.user._id,
         })
       }
+      await awardXP(req.user._id, 'JOIN_STUDY_GROUP', 'studyGroupsJoined')
       return res.json({ message: 'Join request sent!', requested: true })
+
     }
 
     // Public group — join directly

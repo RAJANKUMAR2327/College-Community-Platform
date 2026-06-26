@@ -4,6 +4,8 @@ import api from '../api/axios'
 import Layout from '../components/Layout'
 import useAuthStore from '../store/authStore'
 import toast from 'react-hot-toast'
+import BadgesGrid from '../components/BadgesGrid'
+
 import {
   User, Mail, BookOpen, GraduationCap,
   Edit3, Save, X, Camera, FileText,
@@ -265,6 +267,8 @@ export default function Profile() {
             ))}
           </div>
         </div>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-4"> <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4">Badges</h3> <BadgesGrid /> </div>
+
 
         {/* Bookmarked Notes */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">

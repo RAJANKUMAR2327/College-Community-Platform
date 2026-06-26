@@ -1,6 +1,7 @@
 import express from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import { seedBadges } from './seeds/seedBadges.js'
 import mongoose from 'mongoose'
 import cors from 'cors'
 import helmet from 'helmet'
@@ -29,6 +30,7 @@ import clubRoutes from './routes/clubRoutes.js'
 import questionRoutes from './routes/questionRoutes.js'
 import mentorshipRoutes from './routes/mentorshipRoutes.js'
 import collabDocRoutes from './routes/collabDocRoutes.js'
+import gamificationRoutes from './routes/gamificationRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -405,6 +407,7 @@ app.use('/api/questions', questionRoutes)
 app.use('/api/clubs', clubRoutes)
 app.use('/api/mentorship', mentorshipRoutes)
 app.use('/api/collab-docs', collabDocRoutes)
+app.use('/api/gamification', gamificationRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
@@ -423,3 +426,11 @@ mongoose
     )
   })
   .catch((err) => console.error('❌ DB connection failed:', err.message))
+
+  mongoose.connect(process.env.MONGO_URI).then(async () => {
+  console.log('✅ MongoDB connected')
+  await seedBadges()
+  httpServer.listen(process.env.PORT || 5000, () =>
+    console.log(`🚀 Server running on port ${process.env.PORT || 5000}`)
+  )
+})

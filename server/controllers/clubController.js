@@ -126,6 +126,7 @@ export const joinClub = async (req, res) => {
     if (isMember) return res.status(400).json({ message: 'Already a member.' })
 
     club.members.push({ user: req.user._id })
+    await awardXP(req.user._id, 'JOIN_CLUB', 'clubsJoined')
 
     await Conversation.findByIdAndUpdate(club.conversation, {
       $addToSet: { participants: req.user._id },

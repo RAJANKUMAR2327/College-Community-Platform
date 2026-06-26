@@ -13,6 +13,7 @@ export const addComment = async (req, res) => {
     })
 
     await comment.populate('author', 'name avatar branch year')
+    await awardXP(req.user._id, 'COMMENT', 'commentsPosted')
     res.status(201).json({ message: 'Comment added!', comment })
   } catch (err) {
     res.status(500).json({ message: err.message })
