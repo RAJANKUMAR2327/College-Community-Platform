@@ -9,6 +9,7 @@ import { MessageCircle } from 'lucide-react'
 import { Users } from 'lucide-react'
 import { HelpCircle } from 'lucide-react'
 import { Award } from 'lucide-react'
+import { UserCheck } from 'lucide-react'
 import {
   LayoutDashboard, FileText, Search, Calendar,
   ShoppingBag, Briefcase, User, Settings,
@@ -30,6 +31,7 @@ const navItems = [
   { to: '/study-groups', icon: Users, label: 'Study Groups', section: 'notes', dot: 'bg-indigo-500' },
   { to: '/question-bank', icon: HelpCircle, label: 'Question Bank', section: 'notes', dot: 'bg-indigo-500' },
   { to: '/clubs', icon: Award, label: 'Student Clubs', section: 'events', dot: 'bg-green-500' },
+  { to: '/mentorship', icon: UserCheck, label: 'Mentorship', section: 'placement', dot: 'bg-blue-500' },
 ]
 
 const aiItems = [

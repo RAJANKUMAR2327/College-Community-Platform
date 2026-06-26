@@ -9,6 +9,8 @@ import PWAInstallBanner from './components/PWAInstallBanner'
 import ProtectedRoute from './components/Protecte
 import QuestionBank from './pages/QuestionBank'
 import Clubs from './pages/Clubs'
+import Mentorship from './pages/Mentorship'
+
 
 // ... all your page imports ..
 import Chat from './pages/Chat'
@@ -85,6 +87,8 @@ export default function App() {
         <Route path="/question-bank" element={<ProtectedRoute><QuestionBank /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
         <Route path="/clubs" element={<ProtectedRoute><Clubs /></ProtectedRoute>} />
+        <Route path="/mentorship" element={<ProtectedRoute><Mentorship /></ProtectedRoute>} />
+
       </Routes>
     </BrowserRouter>
   )
