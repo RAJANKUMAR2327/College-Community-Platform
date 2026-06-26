@@ -7,7 +7,6 @@ import useSectionStore from '../store/sectionStore'
 import { Rss } from 'lucide-react'
 import { MessageCircle } from 'lucide-react'
 import { Users } from 'lucide-react'
-
 import {
   LayoutDashboard, FileText, Search, Calendar,
   ShoppingBag, Briefcase, User, Settings,

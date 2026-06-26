@@ -7,7 +7,7 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
-
+import StudyGroup from './models/StudyGroup.js'
 dotenv.config()
 
 import authRoutes from './routes/authRoutes.js'
@@ -23,6 +23,7 @@ import commentRoutes from './routes/commentRoutes.js'
 import postRoutes from './routes/postRoutes.js'
 import chatRoutes from './routes/chatRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
+import studyGroupRoutes from './routes/studyGroupRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -216,6 +217,43 @@ io.on('connection', (socket) => {
       })
     } catch {}
   })
+  // Group message via socket
+socket.on('send_group_message', async (data) => {
+  try {
+    const { groupId, conversationId, content, replyTo } = data
+
+    const group = await StudyGroup.findById(groupId)
+    if (!group) return
+
+    const isMember = group.members.some(
+      m => m.user.toString() === socket.user._id.toString()
+    )
+    if (!isMember) return
+
+    const message = await Message.create({
+      conversation: conversationId,
+      sender: socket.user._id,
+      content,
+      type: 'text',
+      replyTo: replyTo || undefined,
+      readBy: [socket.user._id],
+    })
+
+    await message.populate('sender', 'name avatar branch year')
+
+    await Conversation.findByIdAndUpdate(conversationId, {
+      lastMessage: message._id,
+      lastMessageAt: new Date(),
+    })
+
+    group.messageCount = (group.messageCount || 0) + 1
+    await group.save()
+
+    io.to(`conv_${conversationId}`).emit('message_received', message)
+  } catch (err) {
+    socket.emit('message_error', { message: err.message })
+  }
+})
 
   // Disconnect
   socket.on('disconnect', () => {
@@ -254,6 +292,7 @@ app.use('/api/comments', commentRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/study-groups', studyGroupRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
