@@ -8,7 +8,7 @@ import morgan from 'morgan'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import StudyGroup from './models/StudyGroup.js'
-import questionRoutes from './routes/questionRoutes.js'
+
 dotenv.config()
 
 import authRoutes from './routes/authRoutes.js'
@@ -25,6 +25,8 @@ import postRoutes from './routes/postRoutes.js'
 import chatRoutes from './routes/chatRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
 import studyGroupRoutes from './routes/studyGroupRoutes.js'
+import clubRoutes from './routes/clubRoutes.js'
+import questionRoutes from './routes/questionRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -255,6 +257,34 @@ socket.on('send_group_message', async (data) => {
     socket.emit('message_error', { message: err.message })
   }
 })
+socket.on('send_club_message', async (data) => {
+  try {
+    const { clubId, conversationId, content } = data
+    const club = await Club.findById(clubId)
+    if (!club) return
+
+    const isMember = club.members.some(m => m.user.toString() === socket.user._id.toString())
+    if (!isMember) return
+
+    const message = await Message.create({
+      conversation: conversationId,
+      sender: socket.user._id,
+      content,
+      type: 'text',
+      readBy: [socket.user._id],
+    })
+    await message.populate('sender', 'name avatar branch year')
+
+    await Conversation.findByIdAndUpdate(conversationId, {
+      lastMessage: message._id,
+      lastMessageAt: new Date(),
+    })
+
+    io.to(`conv_${conversationId}`).emit('message_received', message)
+  } catch (err) {
+    socket.emit('message_error', { message: err.message })
+  }
+})
 
   // Disconnect
   socket.on('disconnect', () => {
@@ -295,6 +325,7 @@ app.use('/api/chat', chatRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/study-groups', studyGroupRoutes)
 app.use('/api/questions', questionRoutes)
+app.use('/api/clubs', clubRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 

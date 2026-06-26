@@ -8,7 +8,7 @@ import { initSocket, disconnectSocket } from './socket/socket'
 import PWAInstallBanner from './components/PWAInstallBanner'
 import ProtectedRoute from './components/Protecte
 import QuestionBank from './pages/QuestionBank'
-
+import Clubs from './pages/Clubs'
 
 // ... all your page imports ..
 import Chat from './pages/Chat'
@@ -84,6 +84,7 @@ export default function App() {
         <Route path="/study-groups" element={<ProtectedRoute><StudyGroups /></ProtectedRoute>} />
         <Route path="/question-bank" element={<ProtectedRoute><QuestionBank /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/clubs" element={<ProtectedRoute><Clubs /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   )
