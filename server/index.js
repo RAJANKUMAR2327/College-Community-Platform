@@ -28,6 +28,7 @@ import studyGroupRoutes from './routes/studyGroupRoutes.js'
 import clubRoutes from './routes/clubRoutes.js'
 import questionRoutes from './routes/questionRoutes.js'
 import mentorshipRoutes from './routes/mentorshipRoutes.js'
+import collabDocRoutes from './routes/collabDocRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -286,7 +287,82 @@ socket.on('send_club_message', async (data) => {
     socket.emit('message_error', { message: err.message })
   }
 })
+import CollabDoc from './models/CollabDoc.js'
 
+// Track active editors per doc: docId -> Map(socketId -> {userId, name, color, cursorPos})
+const docEditors = new Map()
+const editorColors = ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#3b82f6', '#ef4444']
+
+socket.on('join_doc', async ({ docId }) => {
+  socket.join(`doc_${docId}`)
+
+  if (!docEditors.has(docId)) docEditors.set(docId, new Map())
+  const editors = docEditors.get(docId)
+  const color = editorColors[editors.size % editorColors.length]
+
+  editors.set(socket.id, {
+    userId: socket.user._id.toString(),
+    name: socket.user.name,
+    avatar: socket.user.avatar,
+    color,
+    cursorPos: 0,
+  })
+
+  // Broadcast updated editor list
+  io.to(`doc_${docId}`).emit('doc_editors', Array.from(editors.values()))
+})
+
+socket.on('leave_doc', ({ docId }) => {
+  socket.leave(`doc_${docId}`)
+  const editors = docEditors.get(docId)
+  if (editors) {
+    editors.delete(socket.id)
+    io.to(`doc_${docId}`).emit('doc_editors', Array.from(editors.values()))
+  }
+})
+
+// Real-time content sync (operational — simple last-write-wins per chunk)
+socket.on('doc_change', async ({ docId, content, title }) => {
+  try {
+    socket.to(`doc_${docId}`).emit('doc_updated', {
+      content, title,
+      editedBy: { id: socket.user._id, name: socket.user.name },
+    })
+
+    // Debounced save handled client-side; this just saves on each change
+    await CollabDoc.findByIdAndUpdate(docId, {
+      content, title,
+      lastEditedBy: socket.user._id,
+      $inc: { version: 1 },
+    })
+  } catch (err) {
+    console.error('doc_change error:', err.message)
+  }
+})
+
+// Cursor position broadcast
+socket.on('cursor_move', ({ docId, cursorPos, selectionEnd }) => {
+  const editors = docEditors.get(docId)
+  if (editors?.has(socket.id)) {
+    editors.get(socket.id).cursorPos = cursorPos
+    editors.get(socket.id).selectionEnd = selectionEnd
+  }
+  socket.to(`doc_${docId}`).emit('cursor_updated', {
+    userId: socket.user._id,
+    name: socket.user.name,
+    cursorPos,
+    selectionEnd,
+    color: editors?.get(socket.id)?.color,
+  })
+})
+
+// Clean up on disconnect
+docEditors.forEach((editors, docId) => {
+  if (editors.has(socket.id)) {
+    editors.delete(socket.id)
+    io.to(`doc_${docId}`).emit('doc_editors', Array.from(editors.values()))
+  }
+})
   // Disconnect
   socket.on('disconnect', () => {
     console.log(`❌ User disconnected: ${socket.user.name}`)
@@ -328,6 +404,7 @@ app.use('/api/study-groups', studyGroupRoutes)
 app.use('/api/questions', questionRoutes)
 app.use('/api/clubs', clubRoutes)
 app.use('/api/mentorship', mentorshipRoutes)
+app.use('/api/collab-docs', collabDocRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 

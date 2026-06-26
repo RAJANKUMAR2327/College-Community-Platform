@@ -10,6 +10,10 @@ import ProtectedRoute from './components/Protecte
 import QuestionBank from './pages/QuestionBank'
 import Clubs from './pages/Clubs'
 import Mentorship from './pages/Mentorship'
+import AIToolsHub from './pages/AIToolsHub'
+import AIConceptExplainer from './pages/AIConceptExplainer'
+import AIEssayHelper from './pages/AIEssayHelper'
+import AITranslator from './pages/AITranslator'
 
 
 // ... all your page imports ..
@@ -88,6 +92,10 @@ export default function App() {
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
         <Route path="/clubs" element={<ProtectedRoute><Clubs /></ProtectedRoute>} />
         <Route path="/mentorship" element={<ProtectedRoute><Mentorship /></ProtectedRoute>} />
+        <Route path="/ai-tools" element={<ProtectedRoute><AIToolsHub /></ProtectedRoute>} />
+        <Route path="/ai-explain" element={<ProtectedRoute><AIConceptExplainer /></ProtectedRoute>} />
+        <Route path="/ai-essay" element={<ProtectedRoute><AIEssayHelper /></ProtectedRoute>} />
+        <Route path="/ai-translate" element={<ProtectedRoute><AITranslator /></ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>
