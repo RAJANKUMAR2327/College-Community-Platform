@@ -8,6 +8,7 @@ import morgan from 'morgan'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import StudyGroup from './models/StudyGroup.js'
+import questionRoutes from './routes/questionRoutes.js'
 dotenv.config()
 
 import authRoutes from './routes/authRoutes.js'
@@ -293,6 +294,7 @@ app.use('/api/posts', postRoutes)
 app.use('/api/chat', chatRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/study-groups', studyGroupRoutes)
+app.use('/api/questions', questionRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 

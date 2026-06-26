@@ -6,8 +6,8 @@ import useAuthStore from './store/authStore'
 import useSocketStore from './store/socketStore'
 import { initSocket, disconnectSocket } from './socket/socket'
 import PWAInstallBanner from './components/PWAInstallBanner'
-import ProtectedRoute from './components/ProtectedRoute'
-import StudyGroups from './pages/StudyGroups'
+import ProtectedRoute from './components/Protecte
+import QuestionBank from './pages/QuestionBank'
 
 
 // ... all your page imports ..
@@ -82,6 +82,7 @@ export default function App() {
         <Route path="/admin/notes" element={<AdminRoute><AdminNotes /></AdminRoute>} />
         <Route path="/admin/comments" element={<AdminRoute><AdminComments /></AdminRoute>} />
         <Route path="/study-groups" element={<ProtectedRoute><StudyGroups /></ProtectedRoute>} />
+        <Route path="/question-bank" element={<ProtectedRoute><QuestionBank /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
