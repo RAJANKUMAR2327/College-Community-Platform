@@ -146,6 +146,7 @@ export default function App() {
         <Route path="/library" element={<ProtectedRoute><LibraryBooking /></ProtectedRoute>} />
         <Route path="/skills" element={<ProtectedRoute><SkillsHub /></ProtectedRoute>} />
         <Route path="/certificate" element={<ProtectedRoute><CertificateGenerator /></ProtectedRoute>} />
+        <Route path="/surveys" element={<ProtectedRoute><Surveys /></ProtectedRoute>} />
 
         {/* Protected AI Tool Routes */}
         <Route path="/ai-study" element={<ProtectedRoute><AIStudyAssistant /></ProtectedRoute>} />

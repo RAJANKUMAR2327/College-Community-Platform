@@ -19,7 +19,7 @@ import { MessageSquareText } from 'lucide-react'
 import { BookOpen as BookOpenIcon } from 'lucide-react'
 import { Shield } from 'lucide-react'
 import { Award as AwardIcon } from 'lucide-react'
-
+import { ClipboardList } from 'lucide-react'
 
 import {
   LayoutDashboard, FileText, Search, Calendar,
@@ -53,6 +53,7 @@ const navItems = [
   { to: '/ai-resume-score', icon: FileSearch, label: 'Resume Score', section: 'placement', dot: 'bg-blue-500' },
   { to: '/ai-mock-interview', icon: Sparkles, label: 'Mock Interview', section: 'placement', dot: 'bg-purple-500' },
   { to: '/referrals', icon: AwardIcon, label: 'Referrals', section: 'placement', dot: 'bg-blue-500' },
+  { to: '/surveys', icon: ClipboardList, label: 'Surveys & Polls', section: 'dashboard', dot: 'bg-indigo-500' },
 ]
 
 const aiItems = [
