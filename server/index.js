@@ -12,6 +12,7 @@ import StudyGroup from './models/StudyGroup.js'
 import cron from 'node-cron'
 import CalendarEvent from './models/CalendarEvent.js'
 import { createNotification } from './controllers/notificationController.js'
+import { seedSkills } from './seeds/seedSkills.js'
 
 
 dotenv.config()
@@ -40,6 +41,7 @@ import calendarRoutes from './routes/calendarRoutes.js'
 import jobApplicationRoutes from './routes/jobApplicationRoutes.js'
 import confessionRoutes from './routes/confessionRoutes.js'
 import libraryRoutes from './routes/libraryRoutes.js'
+import skillRoutes from './routes/skillRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -422,6 +424,7 @@ app.use('/api/calendar', calendarRoutes)
 app.use('/api/applications', jobApplicationRoutes)
 app.use('/api/confessions', confessionRoutes)
 app.use('/api/library', libraryRoutes)
+app.use('/api/skills', skillRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
@@ -448,6 +451,8 @@ mongoose
     console.log(`🚀 Server running on port ${process.env.PORT || 5000}`)
   )
 })
+await seedBadges()
+await seedSkills()
 
 
 // Check for reminders every 5 minutes

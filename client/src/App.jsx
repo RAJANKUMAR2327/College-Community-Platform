@@ -20,6 +20,8 @@ import Calendar from './pages/Calendar'
 import ApplicationTracker from './pages/ApplicationTracker'
 import ConfessionBoard from './pages/ConfessionBoard'
 import LibraryBooking from './pages/LibraryBooking'
+import SkillsHub from './pages/SkillsHub'
+import VerifyCredential from './pages/VerifyCredential'
 
 
 
@@ -110,6 +112,8 @@ export default function App() {
         <Route path="/applications" element={<ProtectedRoute><ApplicationTracker /></ProtectedRoute>} />
         <Route path="/confessions" element={<ProtectedRoute><ConfessionBoard /></ProtectedRoute>} />
         <Route path="/library" element={<ProtectedRoute><LibraryBooking /></ProtectedRoute>} />
+        <Route path="/skills" element={<ProtectedRoute><SkillsHub /></ProtectedRoute>} />
+        <Route path="/verify/:code" element={<VerifyCredential />} />
 
       </Routes>
     </BrowserRouter>
