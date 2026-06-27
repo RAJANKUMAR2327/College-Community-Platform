@@ -19,7 +19,7 @@ import PushPermissionBanner from './components/PushPermissionBanner'
 import Calendar from './pages/Calendar'
 import ApplicationTracker from './pages/ApplicationTracker'
 import ConfessionBoard from './pages/ConfessionBoard'
-
+import LibraryBooking from './pages/LibraryBooking'
 
 
 
@@ -109,6 +109,7 @@ export default function App() {
         <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
         <Route path="/applications" element={<ProtectedRoute><ApplicationTracker /></ProtectedRoute>} />
         <Route path="/confessions" element={<ProtectedRoute><ConfessionBoard /></ProtectedRoute>} />
+        <Route path="/library" element={<ProtectedRoute><LibraryBooking /></ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>

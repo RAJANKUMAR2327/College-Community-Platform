@@ -39,6 +39,7 @@ import pushRoutes from './routes/pushRoutes.js'
 import calendarRoutes from './routes/calendarRoutes.js'
 import jobApplicationRoutes from './routes/jobApplicationRoutes.js'
 import confessionRoutes from './routes/confessionRoutes.js'
+import libraryRoutes from './routes/libraryRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -420,6 +421,7 @@ app.use('/api/push', pushRoutes)
 app.use('/api/calendar', calendarRoutes)
 app.use('/api/applications', jobApplicationRoutes)
 app.use('/api/confessions', confessionRoutes)
+app.use('/api/library', libraryRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
