@@ -9,6 +9,10 @@ import morgan from 'morgan'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import StudyGroup from './models/StudyGroup.js'
+import cron from 'node-cron'
+import CalendarEvent from './models/CalendarEvent.js'
+import { createNotification } from './controllers/notificationController.js'
+
 
 dotenv.config()
 
@@ -32,6 +36,7 @@ import mentorshipRoutes from './routes/mentorshipRoutes.js'
 import collabDocRoutes from './routes/collabDocRoutes.js'
 import gamificationRoutes from './routes/gamificationRoutes.js'
 import pushRoutes from './routes/pushRoutes.js'
+import calendarRoutes from './routes/calendarRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -410,6 +415,7 @@ app.use('/api/mentorship', mentorshipRoutes)
 app.use('/api/collab-docs', collabDocRoutes)
 app.use('/api/gamification', gamificationRoutes)
 app.use('/api/push', pushRoutes)
+app.use('/api/calendar', calendarRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
@@ -435,4 +441,34 @@ mongoose
   httpServer.listen(process.env.PORT || 5000, () =>
     console.log(`🚀 Server running on port ${process.env.PORT || 5000}`)
   )
+})
+
+
+// Check for reminders every 5 minutes
+cron.schedule('*/5 * * * *', async () => {
+  try {
+    const now = new Date()
+    const events = await CalendarEvent.find({
+      'reminder.enabled': true,
+      'reminder.sent': false,
+      startDate: { $gte: now },
+    })
+
+    for (const event of events) {
+      const reminderTime = new Date(event.startDate.getTime() - event.reminder.minutesBefore * 60000)
+      if (now >= reminderTime) {
+        await createNotification({
+          recipient: event.user,
+          type: 'event',
+          title: `⏰ Reminder: ${event.title}`,
+          message: `Starting in ${event.reminder.minutesBefore} minutes`,
+          link: '/calendar',
+        })
+        event.reminder.sent = true
+        await event.save()
+      }
+    }
+  } catch (err) {
+    console.error('Reminder cron error:', err.message)
+  }
 })

@@ -16,6 +16,7 @@ import AIEssayHelper from './pages/AIEssayHelper'
 import AITranslator from './pages/AITranslator'
 import Leaderboard from './pages/Leaderboard'
 import PushPermissionBanner from './components/PushPermissionBanner'
+import Calendar from './pages/Calendar'
 
 
 
@@ -102,6 +103,7 @@ export default function App() {
         <Route path="/ai-essay" element={<ProtectedRoute><AIEssayHelper /></ProtectedRoute>} />
         <Route path="/ai-translate" element={<ProtectedRoute><AITranslator /></ProtectedRoute>} />
         <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+        <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>

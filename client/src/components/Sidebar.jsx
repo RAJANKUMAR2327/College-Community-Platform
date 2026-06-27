@@ -13,6 +13,7 @@ import { UserCheck } from 'lucide-react'
 import { Sparkles as SparklesIcon } from 'lucide-react'
 import XPBar from './XPBar'
 import { Trophy } from 'lucide-react'
+import { CalendarDays } from 'lucide-react'
 
 import {
   LayoutDashboard, FileText, Search, Calendar,
@@ -38,6 +39,7 @@ const navItems = [
   { to: '/mentorship', icon: UserCheck, label: 'Mentorship', section: 'placement', dot: 'bg-blue-500' },
   { to: '/ai-tools', icon: SparklesIcon, label: 'AI Tools Hub', section: 'notes', dot: 'bg-purple-500' },
   { to: '/leaderboard', icon: Trophy, label: 'Leaderboard', section: 'dashboard', dot: 'bg-amber-500' },
+  { to: '/calendar', icon: CalendarDays, label: 'Calendar', section: 'dashboard', dot: 'bg-indigo-500' },
 ]
 
 const aiItems = [

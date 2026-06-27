@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import api from '../api/axios'
 import useAuthStore from '../store/authStore'
 import Layout from '../components/Layout'
+import UpcomingWidget from '../components/UpcomingWidget'
 import {
   FileText, Search, Calendar, ShoppingBag,
   Briefcase, ArrowRight, TrendingUp, Sparkles,
@@ -166,6 +167,7 @@ export default function Dashboard() {
             ))}
           </div>
         </motion.div>
+        <UpcomingWidget />
 
         {/* AI Tools promo */}
         <motion.div variants={item}>
