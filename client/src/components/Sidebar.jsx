@@ -50,7 +50,8 @@ const navItems = [
   { to: '/confessions', icon: MessageSquareText, label: 'Confessions', section: 'dashboard', dot: 'bg-purple-500' },
   { to: '/library', icon: BookOpenIcon, label: 'Library Booking', section: 'notes', dot: 'bg-indigo-500' },
   { to: '/skills', icon: Shield, label: 'Skills & Badges', section: 'placement', dot: 'bg-amber-500' },
-  import { Award as AwardIcon } from 'lucide-react'
+  { to: '/ai-resume-score', icon: FileSearch, label: 'Resume Score', section: 'placement', dot: 'bg-blue-500' },
+{ to: '/ai-mock-interview', icon: Sparkles, label: 'Mock Interview', section: 'placement', dot: 'bg-purple-500' },
 ]
 
 const aiItems = [

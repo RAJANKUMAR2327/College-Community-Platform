@@ -156,13 +156,15 @@ export default function App() {
         <Route path="/ai-explain" element={<ProtectedRoute><AIConceptExplainer /></ProtectedRoute>} />
         <Route path="/ai-essay" element={<ProtectedRoute><AIEssayHelper /></ProtectedRoute>} />
         <Route path="/ai-translate" element={<ProtectedRoute><AITranslator /></ProtectedRoute>} />
+        <Route path="/ai-resume-score" element={<ProtectedRoute><AIResumeScorer /></ProtectedRoute>} />
+        <Route path="/ai-mock-interview" element={<ProtectedRoute><AIMockInterview /></ProtectedRoute>} />
+        <Route path="/referrals" element={<ProtectedRoute><ReferralPortal /></ProtectedRoute>} />
 
         {/* Protected Admin Routes */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
         <Route path="/admin/notes" element={<AdminRoute><AdminNotes /></AdminRoute>} />
         <Route path="/admin/comments" element={<AdminRoute><AdminComments /></AdminRoute>} />
-        <Route path="/referrals" element={<ProtectedRoute><ReferralPortal /></ProtectedRoute>} />
 
         {/* Catch-all Wildcard Route */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
