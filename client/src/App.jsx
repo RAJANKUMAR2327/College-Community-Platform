@@ -18,6 +18,8 @@ import Leaderboard from './pages/Leaderboard'
 import PushPermissionBanner from './components/PushPermissionBanner'
 import Calendar from './pages/Calendar'
 import ApplicationTracker from './pages/ApplicationTracker'
+import ConfessionBoard from './pages/ConfessionBoard'
+
 
 
 
@@ -106,6 +108,7 @@ export default function App() {
         <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
         <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
         <Route path="/applications" element={<ProtectedRoute><ApplicationTracker /></ProtectedRoute>} />
+        <Route path="/confessions" element={<ProtectedRoute><ConfessionBoard /></ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>

@@ -15,6 +15,8 @@ import XPBar from './XPBar'
 import { Trophy } from 'lucide-react'
 import { CalendarDays } from 'lucide-react'
 import { Briefcase as BriefcaseIcon } from 'lucide-react'
+import { MessageSquareText } from 'lucide-react'
+
 
 import {
   LayoutDashboard, FileText, Search, Calendar,
@@ -42,6 +44,7 @@ const navItems = [
   { to: '/leaderboard', icon: Trophy, label: 'Leaderboard', section: 'dashboard', dot: 'bg-amber-500' },
   { to: '/calendar', icon: CalendarDays, label: 'Calendar', section: 'dashboard', dot: 'bg-indigo-500' },
   { to: '/applications', icon: BriefcaseIcon, label: 'Applications', section: 'placement', dot: 'bg-blue-500' },
+  { to: '/confessions', icon: MessageSquareText, label: 'Confessions', section: 'dashboard', dot: 'bg-purple-500' },
 ]
 
 const aiItems = [
