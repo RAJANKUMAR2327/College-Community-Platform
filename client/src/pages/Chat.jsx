@@ -7,6 +7,7 @@ import useAuthStore from '../store/authStore'
 import useSocketStore from '../store/socketStore'
 import { useSection } from '../hooks/useSection'
 import toast from 'react-hot-toast'
+import CallButton from '../components/CallButton'
 import {
   Send, Search, ArrowLeft, Phone,
   MoreVertical, Image, Smile, Reply,
@@ -571,6 +572,14 @@ export default function Chat() {
                   </p>
                 </div>
               </div>
+              {activeOther && (
+                <CallButton
+                targetUserId={activeOther._id}
+                targetName={activeOther.name}
+                targetAvatar={activeOther.avatar}
+                type="one-on-one"
+              />  
+              )}
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto px-4 py-3 bg-gray-50 dark:bg-gray-950/50">

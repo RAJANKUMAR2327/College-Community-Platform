@@ -13,7 +13,7 @@ import cron from 'node-cron'
 import CalendarEvent from './models/CalendarEvent.js'
 import { createNotification } from './controllers/notificationController.js'
 import { seedSkills } from './seeds/seedSkills.js'
-
+import CallSession from './models/CallSession.js'
 
 dotenv.config()
 
@@ -42,6 +42,7 @@ import jobApplicationRoutes from './routes/jobApplicationRoutes.js'
 import confessionRoutes from './routes/confessionRoutes.js'
 import libraryRoutes from './routes/libraryRoutes.js'
 import skillRoutes from './routes/skillRoutes.js'
+import callRoutes from './routes/callRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -108,6 +109,127 @@ io.on('connection', (socket) => {
     socket.leave(`conv_${conversationId}`)
   })
 
+  
+// ─── VIDEO CALL SIGNALING ──────────────────────────────────────────
+
+// Initiate a call — ring the other user(s)
+socket.on('call_initiate', async ({ roomId, targetUserIds, callType }) => {
+  try {
+    for (const targetId of targetUserIds) {
+      const targetSocketId = onlineUsers.get(targetId.toString())
+      if (targetSocketId) {
+        io.to(targetSocketId).emit('incoming_call', {
+          roomId,
+          callType, // 'video' | 'audio'
+          caller: { id: socket.user._id, name: socket.user.name, avatar: socket.user.avatar },
+        })
+      }
+    }
+  } catch (err) {
+    console.error('call_initiate error:', err.message)
+  }
+})
+
+// Accept call
+socket.on('call_accept', ({ roomId, callerId }) => {
+  const callerSocketId = onlineUsers.get(callerId.toString())
+  if (callerSocketId) {
+    io.to(callerSocketId).emit('call_accepted', { roomId, acceptedBy: socket.user._id })
+  }
+  socket.join(`call_${roomId}`)
+})
+
+// Reject call
+socket.on('call_reject', ({ roomId, callerId }) => {
+  const callerSocketId = onlineUsers.get(callerId.toString())
+  if (callerSocketId) {
+    io.to(callerSocketId).emit('call_rejected', { roomId, rejectedBy: socket.user._id })
+  }
+})
+
+// Join the actual call room (both parties after accept)
+socket.on('join_call_room', async ({ roomId }) => {
+  socket.join(`call_${roomId}`)
+
+  await CallSession.findOneAndUpdate(
+    { roomId },
+    {
+      status: 'active',
+      startedAt: new Date(),
+      $push: { 'participants.$[elem].joinedAt': new Date() },
+    },
+    { arrayFilters: [{ 'elem.user': socket.user._id }] }
+  ).catch(() => {})
+
+  // Notify others in room that this user joined
+  socket.to(`call_${roomId}`).emit('user_joined_call', {
+    userId: socket.user._id, name: socket.user.name, avatar: socket.user.avatar,
+  })
+})
+
+// WebRTC signaling: offer
+socket.on('webrtc_offer', ({ roomId, offer, targetUserId }) => {
+  const targetSocketId = onlineUsers.get(targetUserId.toString())
+  if (targetSocketId) {
+    io.to(targetSocketId).emit('webrtc_offer', {
+      offer, roomId, fromUserId: socket.user._id,
+    })
+  }
+})
+
+// WebRTC signaling: answer
+socket.on('webrtc_answer', ({ roomId, answer, targetUserId }) => {
+  const targetSocketId = onlineUsers.get(targetUserId.toString())
+  if (targetSocketId) {
+    io.to(targetSocketId).emit('webrtc_answer', {
+      answer, roomId, fromUserId: socket.user._id,
+    })
+  }
+})
+
+// WebRTC signaling: ICE candidates
+socket.on('webrtc_ice_candidate', ({ roomId, candidate, targetUserId }) => {
+  const targetSocketId = onlineUsers.get(targetUserId.toString())
+  if (targetSocketId) {
+    io.to(targetSocketId).emit('webrtc_ice_candidate', {
+      candidate, roomId, fromUserId: socket.user._id,
+    })
+  }
+})
+
+// Toggle mute/camera state broadcast
+socket.on('call_media_toggle', ({ roomId, type, enabled }) => {
+  socket.to(`call_${roomId}`).emit('peer_media_toggle', {
+    userId: socket.user._id, type, enabled,
+  })
+})
+
+// Screen share signaling
+socket.on('screen_share_start', ({ roomId }) => {
+  socket.to(`call_${roomId}`).emit('peer_screen_share_start', { userId: socket.user._id })
+})
+socket.on('screen_share_stop', ({ roomId }) => {
+  socket.to(`call_${roomId}`).emit('peer_screen_share_stop', { userId: socket.user._id })
+})
+
+// Leave call
+socket.on('leave_call', async ({ roomId }) => {
+  socket.leave(`call_${roomId}`)
+  socket.to(`call_${roomId}`).emit('user_left_call', { userId: socket.user._id })
+
+  try {
+    const call = await CallSession.findOne({ roomId })
+    if (call && call.status === 'active') {
+      const remainingInRoom = io.sockets.adapter.rooms.get(`call_${roomId}`)
+      if (!remainingInRoom || remainingInRoom.size === 0) {
+        call.status = 'ended'
+        call.endedAt = new Date()
+        call.duration = call.startedAt ? Math.round((call.endedAt - call.startedAt) / 1000) : 0
+        await call.save()
+      }
+    }
+  } catch {}
+})
   // Send message via socket
   socket.on('send_message', async (data) => {
     try {
@@ -425,6 +547,7 @@ app.use('/api/applications', jobApplicationRoutes)
 app.use('/api/confessions', confessionRoutes)
 app.use('/api/library', libraryRoutes)
 app.use('/api/skills', skillRoutes)
+app.use('/api/calls', callRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 

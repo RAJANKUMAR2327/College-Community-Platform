@@ -6,6 +6,7 @@ import api from '../api/axios'
 import useAuthStore from '../store/authStore'
 import { useSection } from '../hooks/useSection'
 import toast from 'react-hot-toast'
+import CallButton from '../components/CallButton'
 import {
   Users, Star, Award, Search, X,
   MessageCircle, Calendar, CheckCircle,
@@ -428,7 +429,9 @@ function MyMentorshipsTab() {
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{m.mentee?.name}</p>
                   <p className="text-[10px] text-gray-400">{domainConfig[m.domain]?.label}</p>
                 </div>
-                <MessageCircle size={15} className="text-gray-400 cursor-pointer hover:text-indigo-500" />
+                
+                <CallButton targetUserId={m.mentee._id} targetName={m.mentee.name} targetAvatar={m.mentee.avatar} type="mentorship" />
+
               </div>
             ))}
           </div>
