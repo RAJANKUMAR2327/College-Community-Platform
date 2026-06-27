@@ -41,3 +41,11 @@ export const sendPasswordResetEmail = async (to, token) => {
     `,
   })
 }
+export const sendDigestEmail = async (to, name, html) => {
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to,
+    subject: `📬 Your CampusConnect Digest, ${name}`,
+    html,
+  })
+}

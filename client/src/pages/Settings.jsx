@@ -1,5 +1,5 @@
 import { useSection } from '../hooks/useSection'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import Layout from '../components/Layout'
@@ -7,11 +7,10 @@ import useAuthStore from '../store/authStore'
 import useThemeStore from '../store/themeStore'
 import toast from 'react-hot-toast'
 import { usePushNotifications } from '../hooks/usePushNotifications'
-import { Smartphone } from 'lucide-react'
 import {
-  Lock, Trash2, Moon, Sun, Bell,
-  Shield, ChevronRight, Eye, EyeOff,
-  LogOut, Monitor,
+  Lock, Trash2, Moon, Sun, Bell, Shield, 
+  ChevronRight, Eye, EyeOff, LogOut, Monitor, 
+  Smartphone, Mail, Send
 } from 'lucide-react'
 
 function Section({ title, children }) {
@@ -74,6 +73,23 @@ export default function Settings() {
     lostFound: true,
   })
 
+  // Push notifications hook
+  const { subscribed, loading: pushLoading, supported, subscribe: enablePush, unsubscribe: disablePush } = usePushNotifications()
+
+  // Email Digest State
+  const [digestPrefs, setDigestPrefs] = useState(null)
+  const [sendingPreview, setSendingPreview] = useState(false)
+
+  useEffect(() => {
+    const fetchDigest = async () => {
+      try {
+        const { data } = await api.get('/digest/preferences')
+        setDigestPrefs(data.preferences)
+      } catch {}
+    }
+    fetchDigest()
+  }, [])
+
   const handleChangePassword = async (e) => {
     e.preventDefault()
     if (pwForm.newPassword !== pwForm.confirmPassword) {
@@ -121,35 +137,27 @@ export default function Settings() {
     toast.success('Logged out successfully!')
   }
 
-const { subscribed, loading: pushLoading, supported, subscribe: enablePush, unsubscribe: disablePush } = usePushNotifications()
+  const updateDigestPref = async (updates) => {
+    const newPrefs = { ...digestPrefs, ...updates }
+    setDigestPrefs(newPrefs)
+    try {
+      await api.patch('/digest/preferences', newPrefs)
+    } catch { 
+      toast.error('Failed to save preference') 
+    }
+  }
 
-// Add inside the Notifications Section, before the per-category toggles:
-{supported ? (
-  <SettingRow
-    icon={Smartphone}
-    label="Push Notifications"
-    description="Get notified even when the app is closed"
-  >
-    <button
-      onClick={subscribed ? disablePush : enablePush}
-      disabled={pushLoading}
-      className={`relative w-11 h-6 rounded-full transition-colors duration-200 disabled:opacity-50
-        ${subscribed ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'}`}
-    >
-      <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200
-        ${subscribed ? 'translate-x-5' : 'translate-x-0'}`}
-      />
-    </button>
-  </SettingRow>
-) : (
-  <SettingRow
-    icon={Smartphone}
-    label="Push Notifications"
-    description="Not supported on this browser/device"
-  >
-    <span className="text-xs text-gray-400">N/A</span>
-  </SettingRow>
-)}
+  const handleSendPreview = async () => {
+    setSendingPreview(true)
+    try {
+      await api.post('/digest/preview')
+      toast.success('Check your email!')
+    } catch { 
+      toast.error('Failed to send') 
+    } finally { 
+      setSendingPreview(false) 
+    }
+  }
 
   const PasswordInput = ({ field, placeholder, value, onChange }) => (
     <div className="relative">
@@ -237,6 +245,33 @@ const { subscribed, loading: pushLoading, supported, subscribe: enablePush, unsu
 
         {/* Notifications */}
         <Section title="Notifications">
+          {supported ? (
+            <SettingRow
+              icon={Smartphone}
+              label="Push Notifications"
+              description="Get notified even when the app is closed"
+            >
+              <button
+                onClick={subscribed ? disablePush : enablePush}
+                disabled={pushLoading}
+                className={`relative w-11 h-6 rounded-full transition-colors duration-200 disabled:opacity-50
+                  ${subscribed ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'}`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200
+                  ${subscribed ? 'translate-x-5' : 'translate-x-0'}`}
+                />
+              </button>
+            </SettingRow>
+          ) : (
+            <SettingRow
+              icon={Smartphone}
+              label="Push Notifications"
+              description="Not supported on this browser/device"
+            >
+              <span className="text-xs text-gray-400">N/A</span>
+            </SettingRow>
+          )}
+
           {[
             { key: 'events', label: 'Event Reminders', desc: 'Get notified about upcoming events' },
             { key: 'placement', label: 'Placement Updates', desc: 'New jobs and internships' },
@@ -256,6 +291,48 @@ const { subscribed, loading: pushLoading, supported, subscribe: enablePush, unsu
             </SettingRow>
           ))}
         </Section>
+
+        {/* Email Digest */}
+        {digestPrefs && (
+          <Section title="Email Digest">
+            <SettingRow icon={Mail} label="Email Digest" description="Get a summary of campus activity">
+              <button
+                onClick={() => updateDigestPref({ enabled: !digestPrefs.enabled })}
+                className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${digestPrefs.enabled ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${digestPrefs.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+              </button>
+            </SettingRow>
+
+            {digestPrefs.enabled && (
+              <>
+                <div className="flex gap-2 py-3 border-b border-gray-50 dark:border-gray-800">
+                  {['daily', 'weekly'].map(f => (
+                    <button key={f} onClick={() => updateDigestPref({ frequency: f })}
+                      className={`flex-1 py-2 text-xs font-medium rounded-lg capitalize transition-colors ${digestPrefs.frequency === f ? 'bg-indigo-600 text-white' : 'border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400'}`}>
+                      {f}
+                    </button>
+                  ))}
+                </div>
+
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 py-2">Include in digest:</p>
+                {Object.entries({ notes: 'New Notes', events: 'Upcoming Events', placements: 'Placement Posts', marketplace: 'Marketplace', gamification: 'Your Progress', mentorship: 'Mentorship Updates' }).map(([key, label]) => (
+                  <div key={key} className="flex items-center justify-between py-2">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">{label}</span>
+                    <button onClick={() => updateDigestPref({ sections: { ...digestPrefs.sections, [key]: !digestPrefs.sections[key] } })}
+                      className={`relative w-9 h-5 rounded-full transition-colors ${digestPrefs.sections[key] ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${digestPrefs.sections[key] ? 'translate-x-4' : 'translate-x-0'}`} />
+                    </button>
+                  </div>
+                ))}
+
+                <button onClick={handleSendPreview} disabled={sendingPreview}
+                  className="w-full mt-3 flex items-center justify-center gap-2 text-xs font-medium border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 py-2.5 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors disabled:opacity-50">
+                  <Send size={12} /> {sendingPreview ? 'Sending...' : 'Send me a preview now'}
+                </button>
+              </>
+            )}
+          </Section>
+        )}
 
         {/* Security */}
         <Section title="Security">

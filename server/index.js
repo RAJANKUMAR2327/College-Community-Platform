@@ -14,6 +14,11 @@ import CalendarEvent from './models/CalendarEvent.js'
 import { createNotification } from './controllers/notificationController.js'
 import { seedSkills } from './seeds/seedSkills.js'
 import CallSession from './models/CallSession.js'
+import DigestPreference from './models/DigestPreference.js'
+import User from './models/User.js'
+import { buildDigestData } from './utils/digestBuilder.js'
+import { buildDigestHTML } from './utils/digestEmailTemplate.js'
+import { sendDigestEmail } from './utils/email.js'
 
 dotenv.config()
 
@@ -44,6 +49,7 @@ import libraryRoutes from './routes/libraryRoutes.js'
 import skillRoutes from './routes/skillRoutes.js'
 import callRoutes from './routes/callRoutes.js'
 import referralRoutes from './routes/referralRoutes.js'
+import digestRoutes from './routes/digestRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -550,6 +556,7 @@ app.use('/api/library', libraryRoutes)
 app.use('/api/skills', skillRoutes)
 app.use('/api/calls', callRoutes)
 app.use('/api/referrals', referralRoutes)
+app.use('/api/digest', digestRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
@@ -606,5 +613,44 @@ cron.schedule('*/5 * * * *', async () => {
     }
   } catch (err) {
     console.error('Reminder cron error:', err.message)
+  }
+})
+
+
+// Daily digests — runs every day at 8 AM
+cron.schedule('0 8 * * *', async () => {
+  try {
+    const prefs = await DigestPreference.find({ enabled: true, frequency: 'daily' })
+    for (const pref of prefs) {
+      const user = await User.findById(pref.user)
+      if (!user) continue
+      const data = await buildDigestData(user, pref.sections, 1)
+      const html = buildDigestHTML(data)
+      await sendDigestEmail(user.email, user.name, html)
+      pref.lastSentAt = new Date()
+      await pref.save()
+    }
+    console.log(`✅ Sent ${prefs.length} daily digests`)
+  } catch (err) {
+    console.error('Daily digest cron error:', err.message)
+  }
+})
+
+// Weekly digests — runs every Monday at 8 AM
+cron.schedule('0 8 * * 1', async () => {
+  try {
+    const prefs = await DigestPreference.find({ enabled: true, frequency: 'weekly' })
+    for (const pref of prefs) {
+      const user = await User.findById(pref.user)
+      if (!user) continue
+      const data = await buildDigestData(user, pref.sections, 7)
+      const html = buildDigestHTML(data)
+      await sendDigestEmail(user.email, user.name, html)
+      pref.lastSentAt = new Date()
+      await pref.save()
+    }
+    console.log(`✅ Sent ${prefs.length} weekly digests`)
+  } catch (err) {
+    console.error('Weekly digest cron error:', err.message)
   }
 })
