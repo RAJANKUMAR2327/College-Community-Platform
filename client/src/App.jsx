@@ -49,6 +49,7 @@ import LibraryBooking from './pages/LibraryBooking'
 import SkillsHub from './pages/SkillsHub'
 import VerifyCredential from './pages/VerifyCredential'
 import CertificateGenerator from './pages/CertificateGenerator'
+import ReferralPortal from './pages/ReferralPortal'
 
 // Pages - AI Tools
 import AIStudyAssistant from './pages/AIStudyAssistant'
@@ -161,6 +162,7 @@ export default function App() {
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
         <Route path="/admin/notes" element={<AdminRoute><AdminNotes /></AdminRoute>} />
         <Route path="/admin/comments" element={<AdminRoute><AdminComments /></AdminRoute>} />
+        <Route path="/referrals" element={<ProtectedRoute><ReferralPortal /></ProtectedRoute>} />
 
         {/* Catch-all Wildcard Route */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

@@ -43,6 +43,7 @@ import confessionRoutes from './routes/confessionRoutes.js'
 import libraryRoutes from './routes/libraryRoutes.js'
 import skillRoutes from './routes/skillRoutes.js'
 import callRoutes from './routes/callRoutes.js'
+import referralRoutes from './routes/referralRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -548,6 +549,7 @@ app.use('/api/confessions', confessionRoutes)
 app.use('/api/library', libraryRoutes)
 app.use('/api/skills', skillRoutes)
 app.use('/api/calls', callRoutes)
+app.use('/api/referrals', referralRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
