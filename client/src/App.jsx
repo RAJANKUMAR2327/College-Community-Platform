@@ -17,6 +17,7 @@ import AITranslator from './pages/AITranslator'
 import Leaderboard from './pages/Leaderboard'
 import PushPermissionBanner from './components/PushPermissionBanner'
 import Calendar from './pages/Calendar'
+import ApplicationTracker from './pages/ApplicationTracker'
 
 
 
@@ -104,6 +105,7 @@ export default function App() {
         <Route path="/ai-translate" element={<ProtectedRoute><AITranslator /></ProtectedRoute>} />
         <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
         <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+        <Route path="/applications" element={<ProtectedRoute><ApplicationTracker /></ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>

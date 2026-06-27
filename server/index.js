@@ -37,6 +37,7 @@ import collabDocRoutes from './routes/collabDocRoutes.js'
 import gamificationRoutes from './routes/gamificationRoutes.js'
 import pushRoutes from './routes/pushRoutes.js'
 import calendarRoutes from './routes/calendarRoutes.js'
+import jobApplicationRoutes from './routes/jobApplicationRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -416,6 +417,7 @@ app.use('/api/collab-docs', collabDocRoutes)
 app.use('/api/gamification', gamificationRoutes)
 app.use('/api/push', pushRoutes)
 app.use('/api/calendar', calendarRoutes)
+app.use('/api/applications', jobApplicationRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
