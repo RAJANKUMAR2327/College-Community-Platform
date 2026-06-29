@@ -61,6 +61,9 @@ import AIToolsHub from './pages/AIToolsHub'
 import AIConceptExplainer from './pages/AIConceptExplainer'
 import AIEssayHelper from './pages/AIEssayHelper'
 import AITranslator from './pages/AITranslator'
+import WhiteboardsList from './pages/WhiteboardsList'
+import WhiteboardPage from './pages/Whiteboard'
+
 
 // Pages - Admin
 import AdminDashboard from './pages/AdminDashboard'
@@ -151,6 +154,8 @@ export default function App() {
         <Route path="/surveys" element={<ProtectedRoute><Surveys /></ProtectedRoute>} />
         <Route path="/rides" element={<ProtectedRoute><RideShare /></ProtectedRoute>} />
         <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
+        <Route path="/whiteboards" element={<ProtectedRoute><WhiteboardsList /></ProtectedRoute>} />
+        <Route path="/whiteboards/:boardId" element={<ProtectedRoute><WhiteboardPage /></ProtectedRoute>} />
 
         {/* Protected AI Tool Routes */}
         <Route path="/ai-study" element={<ProtectedRoute><AIStudyAssistant /></ProtectedRoute>} />

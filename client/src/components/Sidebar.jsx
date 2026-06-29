@@ -6,6 +6,7 @@ import useAuthStore from '../store/authStore'
 import useThemeStore from '../store/themeStore'
 import useSectionStore from '../store/sectionStore'
 import XPBar from './XPBar'
+import { PenTool } from 'lucide-react'
 
 import {
   LayoutDashboard, FileText, Search, Calendar,
@@ -90,6 +91,7 @@ function SidebarInner({ user, theme, toggleTheme, handleLogout, onClose }) {
     { to: '/surveys', icon: ClipboardList, label: t('nav.surveysPolls', 'Surveys & Polls'), section: 'dashboard', dot: 'bg-indigo-500' },
     { to: '/rides', icon: Car, label: t('nav.rideShare', 'Ride Share'), section: 'events', dot: 'bg-green-500' },
     { to: '/admin/analytics', icon: BarChart2, label: t('nav.analytics', 'Analytics'), section: 'dashboard', dot: 'bg-indigo-500' },
+    { to: '/whiteboards', icon: PenTool, label: 'Whiteboards', section: 'notes', dot: 'bg-indigo-500' },
   ]
 
   const aiItems = [

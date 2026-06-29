@@ -53,10 +53,13 @@ import digestRoutes from './routes/digestRoutes.js'
 import surveyRoutes from './routes/surveyRoutes.js'
 import rideRoutes from './routes/rideRoutes.js'
 import advancedAnalyticsRoutes from './routes/advancedAnalyticsRoutes.js'
+import whiteboardRoutes from './routes/whiteboardRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
 import User from './models/User.js'
+import Whiteboard from './models/Whiteboard.js'
+
 
 const app = express()
 const httpServer = createServer(app)
@@ -119,6 +122,86 @@ io.on('connection', (socket) => {
     socket.leave(`conv_${conversationId}`)
   })
 
+const boardEditors = new Map() // boardId -> Map(socketId -> {userId, name, color, cursorX, cursorY})
+const cursorColors = ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#3b82f6', '#ef4444']
+
+socket.on('join_whiteboard', ({ boardId }) => {
+  socket.join(`board_${boardId}`)
+  if (!boardEditors.has(boardId)) boardEditors.set(boardId, new Map())
+  const editors = boardEditors.get(boardId)
+  const color = cursorColors[editors.size % cursorColors.length]
+  editors.set(socket.id, { userId: socket.user._id.toString(), name: socket.user.name, color, cursorX: 0, cursorY: 0 })
+  io.to(`board_${boardId}`).emit('board_editors', Array.from(editors.values()))
+})
+
+socket.on('leave_whiteboard', ({ boardId }) => {
+  socket.leave(`board_${boardId}`)
+  const editors = boardEditors.get(boardId)
+  if (editors) {
+    editors.delete(socket.id)
+    io.to(`board_${boardId}`).emit('board_editors', Array.from(editors.values()))
+  }
+})
+
+// Live stroke drawing (broadcast as user draws, before commit)
+socket.on('drawing_stroke', ({ boardId, stroke }) => {
+  socket.to(`board_${boardId}`).emit('stroke_drawing', stroke)
+})
+
+// Commit a finished stroke (saved to DB)
+socket.on('stroke_complete', async ({ boardId, stroke }) => {
+  try {
+    const fullStroke = { ...stroke, createdBy: socket.user._id }
+    await Whiteboard.findByIdAndUpdate(boardId, {
+      $push: { strokes: fullStroke },
+      lastEditedBy: socket.user._id,
+    })
+    io.to(`board_${boardId}`).emit('stroke_committed', fullStroke)
+  } catch (err) {
+    console.error('stroke_complete error:', err.message)
+  }
+})
+
+// Undo last stroke
+socket.on('undo_stroke', async ({ boardId }) => {
+  try {
+    const board = await Whiteboard.findById(boardId)
+    if (board && board.strokes.length > 0) {
+      board.strokes.pop()
+      await board.save()
+      io.to(`board_${boardId}`).emit('board_undo')
+    }
+  } catch {}
+})
+
+// Clear board
+socket.on('clear_board', async ({ boardId }) => {
+  try {
+    await Whiteboard.findByIdAndUpdate(boardId, { strokes: [] })
+    io.to(`board_${boardId}`).emit('board_cleared')
+  } catch {}
+})
+
+// Cursor position broadcast
+socket.on('whiteboard_cursor', ({ boardId, x, y }) => {
+  const editors = boardEditors.get(boardId)
+  if (editors?.has(socket.id)) {
+    editors.get(socket.id).cursorX = x
+    editors.get(socket.id).cursorY = y
+  }
+  socket.to(`board_${boardId}`).emit('peer_cursor', {
+    userId: socket.user._id, name: socket.user.name, x, y,
+    color: editors?.get(socket.id)?.color,
+  })
+})
+
+// Clean up on disconnect
+boardEditors.forEach((editors, boardId) => {
+  if (editors.has(socket.id)) {
+    editors.delete(socket.id)
+    io.to(`board_${boardId}`).emit('board_editors', Array.from(editors.values()))
+  }
+})
   
 // ─── VIDEO CALL SIGNALING ──────────────────────────────────────────
 
@@ -563,6 +646,7 @@ app.use('/api/digest', digestRoutes)
 app.use('/api/surveys', surveyRoutes)
 app.use('/api/rides', rideRoutes)
 app.use('/api/admin/analytics', advancedAnalyticsRoutes)
+app.use('/api/whiteboards', whiteboardRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
