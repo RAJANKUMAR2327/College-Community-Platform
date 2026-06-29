@@ -20,6 +20,7 @@ import { BookOpen as BookOpenIcon } from 'lucide-react'
 import { Shield } from 'lucide-react'
 import { Award as AwardIcon } from 'lucide-react'
 import { ClipboardList } from 'lucide-react'
+import { Car } from 'lucide-react'
 
 import {
   LayoutDashboard, FileText, Search, Calendar,
@@ -54,6 +55,7 @@ const navItems = [
   { to: '/ai-mock-interview', icon: Sparkles, label: 'Mock Interview', section: 'placement', dot: 'bg-purple-500' },
   { to: '/referrals', icon: AwardIcon, label: 'Referrals', section: 'placement', dot: 'bg-blue-500' },
   { to: '/surveys', icon: ClipboardList, label: 'Surveys & Polls', section: 'dashboard', dot: 'bg-indigo-500' },
+  { to: '/rides', icon: Car, label: 'Ride Share', section: 'events', dot: 'bg-green-500' },
 ]
 
 const aiItems = [

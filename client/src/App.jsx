@@ -50,6 +50,7 @@ import SkillsHub from './pages/SkillsHub'
 import VerifyCredential from './pages/VerifyCredential'
 import CertificateGenerator from './pages/CertificateGenerator'
 import ReferralPortal from './pages/ReferralPortal'
+import RideShare from './pages/RideShare'
 
 // Pages - AI Tools
 import AIStudyAssistant from './pages/AIStudyAssistant'
@@ -147,6 +148,7 @@ export default function App() {
         <Route path="/skills" element={<ProtectedRoute><SkillsHub /></ProtectedRoute>} />
         <Route path="/certificate" element={<ProtectedRoute><CertificateGenerator /></ProtectedRoute>} />
         <Route path="/surveys" element={<ProtectedRoute><Surveys /></ProtectedRoute>} />
+        <Route path="/rides" element={<ProtectedRoute><RideShare /></ProtectedRoute>} />
 
         {/* Protected AI Tool Routes */}
         <Route path="/ai-study" element={<ProtectedRoute><AIStudyAssistant /></ProtectedRoute>} />
