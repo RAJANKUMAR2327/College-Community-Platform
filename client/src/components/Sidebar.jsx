@@ -1,77 +1,21 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import useAuthStore from '../store/authStore'
 import useThemeStore from '../store/themeStore'
 import useSectionStore from '../store/sectionStore'
-import { Rss } from 'lucide-react'
-import { MessageCircle } from 'lucide-react'
-import { Users } from 'lucide-react'
-import { HelpCircle } from 'lucide-react'
-import { Award } from 'lucide-react'
-import { UserCheck } from 'lucide-react'
-import { Sparkles as SparklesIcon } from 'lucide-react'
 import XPBar from './XPBar'
-import { Trophy } from 'lucide-react'
-import { CalendarDays } from 'lucide-react'
-import { Briefcase as BriefcaseIcon } from 'lucide-react'
-import { MessageSquareText } from 'lucide-react'
-import { BookOpen as BookOpenIcon } from 'lucide-react'
-import { Shield } from 'lucide-react'
-import { Award as AwardIcon } from 'lucide-react'
-import { ClipboardList } from 'lucide-react'
-import { Car } from 'lucide-react'
-import { BarChart2 } from 'lucide-react'
 
 import {
   LayoutDashboard, FileText, Search, Calendar,
   ShoppingBag, Briefcase, User, Settings,
   LogOut, Sun, Moon, Menu, X, TrendingUp,
-  Sparkles, BookOpen, Bot, Award, Shield,
+  Sparkles, BookOpen, Bot, Shield, Rss, 
+  MessageCircle, Users, HelpCircle, Trophy, 
+  CalendarDays, MessageSquareText, ClipboardList, 
+  Car, BarChart2, FileSearch, Award
 } from 'lucide-react'
-
-const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', section: 'dashboard', dot: 'bg-indigo-500' },
-  { to: '/notes', icon: FileText, label: 'Notes', section: 'notes', dot: 'bg-indigo-500' },
-  { to: '/lost-found', icon: Search, label: 'Lost & Found', section: 'lostfound', dot: 'bg-amber-500' },
-  { to: '/events', icon: Calendar, label: 'Events', section: 'events', dot: 'bg-green-500' },
-  { to: '/marketplace', icon: ShoppingBag, label: 'Marketplace', section: 'marketplace', dot: 'bg-pink-500' },
-  { to: '/placement', icon: Briefcase, label: 'Placement', section: 'placement', dot: 'bg-blue-500' },
-  { to: '/placement-dashboard', icon: TrendingUp, label: 'Stats', section: 'placement', dot: 'bg-blue-500' },
-  { to: '/resume-builder', icon: FileText, label: 'Resume', section: 'placement', dot: 'bg-blue-500' },
-  { to: '/feed', icon: Rss, label: 'Campus Feed', section: 'dashboard', dot: 'bg-indigo-500' },
-  { to: '/chat', icon: MessageCircle, label: 'Messages', section: 'dashboard', dot: 'bg-green-500' },
-  { to: '/study-groups', icon: Users, label: 'Study Groups', section: 'notes', dot: 'bg-indigo-500' },
-  { to: '/question-bank', icon: HelpCircle, label: 'Question Bank', section: 'notes', dot: 'bg-indigo-500' },
-  { to: '/clubs', icon: Award, label: 'Student Clubs', section: 'events', dot: 'bg-green-500' },
-  { to: '/mentorship', icon: UserCheck, label: 'Mentorship', section: 'placement', dot: 'bg-blue-500' },
-  { to: '/ai-tools', icon: SparklesIcon, label: 'AI Tools Hub', section: 'notes', dot: 'bg-purple-500' },
-  { to: '/leaderboard', icon: Trophy, label: 'Leaderboard', section: 'dashboard', dot: 'bg-amber-500' },
-  { to: '/calendar', icon: CalendarDays, label: 'Calendar', section: 'dashboard', dot: 'bg-indigo-500' },
-  { to: '/applications', icon: BriefcaseIcon, label: 'Applications', section: 'placement', dot: 'bg-blue-500' },
-  { to: '/confessions', icon: MessageSquareText, label: 'Confessions', section: 'dashboard', dot: 'bg-purple-500' },
-  { to: '/library', icon: BookOpenIcon, label: 'Library Booking', section: 'notes', dot: 'bg-indigo-500' },
-  { to: '/skills', icon: Shield, label: 'Skills & Badges', section: 'placement', dot: 'bg-amber-500' },
-  { to: '/ai-resume-score', icon: FileSearch, label: 'Resume Score', section: 'placement', dot: 'bg-blue-500' },
-  { to: '/ai-mock-interview', icon: Sparkles, label: 'Mock Interview', section: 'placement', dot: 'bg-purple-500' },
-  { to: '/referrals', icon: AwardIcon, label: 'Referrals', section: 'placement', dot: 'bg-blue-500' },
-  { to: '/surveys', icon: ClipboardList, label: 'Surveys & Polls', section: 'dashboard', dot: 'bg-indigo-500' },
-  { to: '/rides', icon: Car, label: 'Ride Share', section: 'events', dot: 'bg-green-500' },
-  { to: '/admin/analytics', icon: BarChart2, label: 'Analytics' },
-]
-
-const aiItems = [
-  { to: '/ai-study', icon: Bot, label: 'Study AI', section: 'notes', dot: 'bg-purple-500' },
-  { to: '/ai-quiz', icon: Sparkles, label: 'Quiz AI', section: 'notes', dot: 'bg-purple-500' },
-  { to: '/ai-career', icon: TrendingUp, label: 'Career AI', section: 'placement', dot: 'bg-purple-500' },
-  { to: '/ai-notes', icon: BookOpen, label: 'Note AI', section: 'notes', dot: 'bg-purple-500' },
-]
-
-const bottomItems = [
-  { to: '/profile', icon: User, label: 'Profile', section: 'dashboard', dot: 'bg-gray-400' },
-  { to: '/settings', icon: Settings, label: 'Settings', section: 'dashboard', dot: 'bg-gray-400' },
-  { to: '/certificate', icon: Award, label: 'Certificate', section: 'dashboard', dot: 'bg-amber-400' },
-]
 
 const sectionActiveStyles = {
   dashboard: 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
@@ -82,9 +26,7 @@ const sectionActiveStyles = {
   placement: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
 }
 
-function NavGroup({ title, items, setSection, onClose, user }) {
-  const { currentSection } = useSectionStore()
-
+function NavGroup({ title, items, setSection, onClose }) {
   return (
     <>
       <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-600 uppercase tracking-wider px-3 mb-1 mt-4 first:mt-2">
@@ -116,7 +58,52 @@ function NavGroup({ title, items, setSection, onClose, user }) {
 }
 
 function SidebarInner({ user, theme, toggleTheme, handleLogout, onClose }) {
+  const { t } = useTranslation()
   const { setSection } = useSectionStore()
+
+  // Localized Navigation Items mapped inside render to resolve hook values
+  const navItems = [
+    { to: '/dashboard', icon: LayoutDashboard, label: t('nav.dashboard'), section: 'dashboard', dot: 'bg-indigo-500' },
+    { to: '/notes', icon: FileText, label: t('nav.notes'), section: 'notes', dot: 'bg-indigo-500' },
+    { to: '/lost-found', icon: Search, label: t('nav.lostFound'), section: 'lostfound', dot: 'bg-amber-500' },
+    { to: '/events', icon: Calendar, label: t('nav.events'), section: 'events', dot: 'bg-green-500' },
+    { to: '/marketplace', icon: ShoppingBag, label: t('nav.marketplace'), section: 'marketplace', dot: 'bg-pink-500' },
+    { to: '/placement', icon: Briefcase, label: t('nav.placement'), section: 'placement', dot: 'bg-blue-500' },
+    { to: '/placement-dashboard', icon: TrendingUp, label: t('nav.stats', 'Stats'), section: 'placement', dot: 'bg-blue-500' },
+    { to: '/resume-builder', icon: FileText, label: t('nav.resume', 'Resume'), section: 'placement', dot: 'bg-blue-500' },
+    { to: '/feed', icon: Rss, label: t('nav.campusFeed', 'Campus Feed'), section: 'dashboard', dot: 'bg-indigo-500' },
+    { to: '/chat', icon: MessageCircle, label: t('nav.messages', 'Messages'), section: 'dashboard', dot: 'bg-green-500' },
+    { to: '/study-groups', icon: Users, label: t('nav.studyGroups', 'Study Groups'), section: 'notes', dot: 'bg-indigo-500' },
+    { to: '/question-bank', icon: HelpCircle, label: t('nav.questionBank', 'Question Bank'), section: 'notes', dot: 'bg-indigo-500' },
+    { to: '/clubs', icon: Award, label: t('nav.studentClubs', 'Student Clubs'), section: 'events', dot: 'bg-green-500' },
+    { to: '/mentorship', icon: UserCheck => User, icon: User, label: t('nav.mentorship', 'Mentorship'), section: 'placement', dot: 'bg-blue-500' },
+    { to: '/ai-tools', icon: Sparkles, label: t('nav.aiToolsHub', 'AI Tools Hub'), section: 'notes', dot: 'bg-purple-500' },
+    { to: '/leaderboard', icon: Trophy, label: t('nav.leaderboard', 'Leaderboard'), section: 'dashboard', dot: 'bg-amber-500' },
+    { to: '/calendar', icon: CalendarDays, label: t('nav.calendar', 'Calendar'), section: 'dashboard', dot: 'bg-indigo-500' },
+    { to: '/applications', icon: Briefcase, label: t('nav.applications', 'Applications'), section: 'placement', dot: 'bg-blue-500' },
+    { to: '/confessions', icon: MessageSquareText, label: t('nav.confessions', 'Confessions'), section: 'dashboard', dot: 'bg-purple-500' },
+    { to: '/library', icon: BookOpen, label: t('nav.libraryBooking', 'Library Booking'), section: 'notes', dot: 'bg-indigo-500' },
+    { to: '/skills', icon: Shield, label: t('nav.skillsBadges', 'Skills & Badges'), section: 'placement', dot: 'bg-amber-500' },
+    { to: '/ai-resume-score', icon: FileSearch, label: t('nav.resumeScore', 'Resume Score'), section: 'placement', dot: 'bg-blue-500' },
+    { to: '/ai-mock-interview', icon: Sparkles, label: t('nav.mockInterview', 'Mock Interview'), section: 'placement', dot: 'bg-purple-500' },
+    { to: '/referrals', icon: Award, label: t('nav.referrals', 'Referrals'), section: 'placement', dot: 'bg-blue-500' },
+    { to: '/surveys', icon: ClipboardList, label: t('nav.surveysPolls', 'Surveys & Polls'), section: 'dashboard', dot: 'bg-indigo-500' },
+    { to: '/rides', icon: Car, label: t('nav.rideShare', 'Ride Share'), section: 'events', dot: 'bg-green-500' },
+    { to: '/admin/analytics', icon: BarChart2, label: t('nav.analytics', 'Analytics'), section: 'dashboard', dot: 'bg-indigo-500' },
+  ]
+
+  const aiItems = [
+    { to: '/ai-study', icon: Bot, label: t('nav.studyAi', 'Study AI'), section: 'notes', dot: 'bg-purple-500' },
+    { to: '/ai-quiz', icon: Sparkles, label: t('nav.quizAi', 'Quiz AI'), section: 'notes', dot: 'bg-purple-500' },
+    { to: '/ai-career', icon: TrendingUp, label: t('nav.careerAi', 'Career AI'), section: 'placement', dot: 'bg-purple-500' },
+    { to: '/ai-notes', icon: BookOpen, label: t('nav.noteAi', 'Note AI'), section: 'notes', dot: 'bg-purple-500' },
+  ]
+
+  const bottomItems = [
+    { to: '/profile', icon: User, label: t('nav.profile', 'Profile'), section: 'dashboard', dot: 'bg-gray-400' },
+    { to: '/settings', icon: Settings, label: t('nav.settings', 'Settings'), section: 'dashboard', dot: 'bg-gray-400' },
+    { to: '/certificate', icon: Award, label: t('nav.certificate', 'Certificate'), section: 'dashboard', dot: 'bg-amber-400' },
+  ]
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-900">
@@ -138,14 +125,14 @@ function SidebarInner({ user, theme, toggleTheme, handleLogout, onClose }) {
 
       {/* Nav */}
       <nav className="flex-1 px-1 py-2 overflow-y-auto">
-        <NavGroup title="Main" items={navItems} setSection={setSection} onClose={onClose} user={user} />
-        <NavGroup title="AI Tools" items={aiItems} setSection={setSection} onClose={onClose} user={user} />
-        <NavGroup title="You" items={bottomItems} setSection={setSection} onClose={onClose} user={user} />
+        <NavGroup title={t('nav.titleMain', 'Main')} items={navItems} setSection={setSection} onClose={onClose} />
+        <NavGroup title={t('nav.titleAi', 'AI Tools')} items={aiItems} setSection={setSection} onClose={onClose} />
+        <NavGroup title={t('nav.titleYou', 'You')} items={bottomItems} setSection={setSection} onClose={onClose} />
 
         {user?.role === 'admin' && (
           <>
             <p className="text-[10px] font-semibold text-red-400/60 uppercase tracking-wider px-3 mb-1 mt-4">
-              Admin
+              {t('nav.admin', 'Admin')}
             </p>
             <NavLink to="/admin"
               onClick={() => { setSection('dashboard'); onClose() }}
@@ -155,14 +142,16 @@ function SidebarInner({ user, theme, toggleTheme, handleLogout, onClose }) {
               }>
               <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
               <Shield size={15} />
-              Admin Panel
+              {t('nav.adminPanel', 'Admin Panel')}
             </NavLink>
           </>
         )}
       </nav>
 
-      // Add before the theme toggle div:
-      <div className="px-2 py-2"> <XPBar /> </div>
+      {/* XP Progress Bar */}
+      <div className="px-2 py-2">
+        <XPBar />
+      </div>
 
       {/* Theme toggle */}
       <div className="px-3 py-2 border-t border-gray-100 dark:border-gray-800">
@@ -174,7 +163,7 @@ function SidebarInner({ user, theme, toggleTheme, handleLogout, onClose }) {
             ? <Moon size={14} className="text-indigo-400" />
             : <Sun size={14} className="text-amber-400" />
           }
-          {theme === 'light' ? 'Dark mode' : 'Light mode'}
+          {theme === 'light' ? t('nav.darkMode') : t('nav.lightMode')}
         </button>
       </div>
 
@@ -196,7 +185,7 @@ function SidebarInner({ user, theme, toggleTheme, handleLogout, onClose }) {
           onClick={handleLogout}
           className="flex items-center gap-2 text-xs text-gray-400 hover:text-red-500 transition-colors w-full px-2 py-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10"
         >
-          <LogOut size={12} /> Logout
+          <LogOut size={12} /> {t('nav.logout')}
         </button>
       </div>
     </div>
@@ -221,7 +210,7 @@ export default function Sidebar() {
       {/* Mobile topbar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-4 py-3 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs">CC</div>
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-50 to-purple-500 flex items-center justify-center text-white font-bold text-xs">CC</div>
           <span className="text-sm font-bold text-gray-900 dark:text-gray-100">CampusConnect</span>
         </div>
         <button onClick={() => setMobileOpen(true)} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 p-1">

@@ -5,6 +5,7 @@ import useSectionStore from '../store/sectionStore'
 import { getTheme } from '../styles/tokens'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
+import LanguageSwitcher from './LanguageSwitcher'
 
 export default function Layout({ children }) {
   const { currentSection } = useSectionStore()
@@ -31,9 +32,12 @@ export default function Layout({ children }) {
               {currentSection === 'lostfound' ? 'Lost & Found' : currentSection}
             </span>
           </div>
+          
+          {/* Topbar Actions */}
           <div className="flex items-center gap-3">
             <GlobalSearch />
             <NotificationBell />
+            <LanguageSwitcher /> {/* Added right here */}
           </div>
         </div>
 

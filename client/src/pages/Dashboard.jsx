@@ -5,6 +5,7 @@ import api from '../api/axios'
 import useAuthStore from '../store/authStore'
 import Layout from '../components/Layout'
 import UpcomingWidget from '../components/UpcomingWidget'
+import { useTranslation } from 'react-i18next'
 import {
   FileText, Search, Calendar, ShoppingBag,
   Briefcase, ArrowRight, TrendingUp, Sparkles,
@@ -29,6 +30,10 @@ const item = {
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation()
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? t('dashboard.goodMorning') : hour < 17 ? t('dashboard.goodAfternoon') : t('dashboard.goodEvening')
+
   const { user } = useAuthStore()
   const [stats, setStats] = useState({ notes: 0, events: 0, listings: 0, lostFound: 0 })
   const [animatedStats, setAnimatedStats] = useState({ notes: 0, events: 0, listings: 0, lostFound: 0 })
@@ -77,6 +82,10 @@ export default function Dashboard() {
     { label: 'Lost Items', value: animatedStats.lostFound, icon: '🔍', color: 'from-amber-500/10 to-orange-500/10', border: 'border-amber-500/20' },
     { label: 'Upcoming Events', value: animatedStats.events, icon: '📅', color: 'from-green-500/10 to-teal-500/10', border: 'border-green-500/20' },
     { label: 'Marketplace', value: animatedStats.listings, icon: '🛍️', color: 'from-pink-500/10 to-rose-500/10', border: 'border-pink-500/20' },
+    { label: t('dashboard.notesShared'), value: animatedStats.notes, icon: '📚', ... },
+    { label: t('dashboard.lostItems'), value: animatedStats.lostFound, icon: '🔍', ... },
+    { label: t('dashboard.upcomingEvents'), value: animatedStats.events, icon: '📅', ... },
+    { label: t('dashboard.listings'), value: animatedStats.listings, icon: '🛍️', ... },
   ]
 
   return (

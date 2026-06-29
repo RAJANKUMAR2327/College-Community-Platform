@@ -7,10 +7,12 @@ import useAuthStore from '../store/authStore'
 import useThemeStore from '../store/themeStore'
 import toast from 'react-hot-toast'
 import { usePushNotifications } from '../hooks/usePushNotifications'
+import { useTranslation } from 'react-i18next'
+import LanguageSwitcher from '../components/LanguageSwitcher'
 import {
   Lock, Trash2, Moon, Sun, Bell, Shield, 
   ChevronRight, Eye, EyeOff, LogOut, Monitor, 
-  Smartphone, Mail, Send
+  Smartphone, Mail, Send, Globe
 } from 'lucide-react'
 
 function Section({ title, children }) {
@@ -49,6 +51,7 @@ export default function Settings() {
   const { user, logout, setAuth } = useAuthStore()
   const { theme, toggleTheme } = useThemeStore()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   // Change password
   const [pwForm, setPwForm] = useState({
@@ -241,6 +244,13 @@ export default function Settings() {
               Sync
             </button>
           </SettingRow>
+        </Section>
+
+        {/* Language */}
+        <Section title={t('settings.language')}>
+          <div className="py-2">
+            <LanguageSwitcher variant="inline" />
+          </div>
         </Section>
 
         {/* Notifications */}

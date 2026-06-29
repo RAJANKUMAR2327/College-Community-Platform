@@ -5,8 +5,10 @@ import api from '../api/axios'
 import useAuthStore from '../store/authStore'
 import toast from 'react-hot-toast'
 import { Mail, Lock, ArrowRight, Eye, EyeOff, Sparkles } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export default function Login() {
+  const { t } = useTranslation()
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
