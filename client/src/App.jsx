@@ -67,6 +67,7 @@ import AdminDashboard from './pages/AdminDashboard'
 import AdminUsers from './pages/AdminUsers'
 import AdminNotes from './pages/AdminNotes'
 import AdminComments from './pages/AdminComments'
+import AdminAnalytics from './pages/admin/AdminAnalytics'
 
 function RootRedirect() {
   const { token } = useAuthStore()
@@ -149,6 +150,7 @@ export default function App() {
         <Route path="/certificate" element={<ProtectedRoute><CertificateGenerator /></ProtectedRoute>} />
         <Route path="/surveys" element={<ProtectedRoute><Surveys /></ProtectedRoute>} />
         <Route path="/rides" element={<ProtectedRoute><RideShare /></ProtectedRoute>} />
+        <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
 
         {/* Protected AI Tool Routes */}
         <Route path="/ai-study" element={<ProtectedRoute><AIStudyAssistant /></ProtectedRoute>} />

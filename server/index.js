@@ -52,6 +52,7 @@ import referralRoutes from './routes/referralRoutes.js'
 import digestRoutes from './routes/digestRoutes.js'
 import surveyRoutes from './routes/surveyRoutes.js'
 import rideRoutes from './routes/rideRoutes.js'
+import advancedAnalyticsRoutes from './routes/advancedAnalyticsRoutes.js'
 
 import Message from './models/Message.js'
 import Conversation from './models/Conversation.js'
@@ -561,6 +562,7 @@ app.use('/api/referrals', referralRoutes)
 app.use('/api/digest', digestRoutes)
 app.use('/api/surveys', surveyRoutes)
 app.use('/api/rides', rideRoutes)
+app.use('/api/admin/analytics', advancedAnalyticsRoutes)
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }))
 
